@@ -27,10 +27,12 @@ if __name__ == '__main__':
     chat_history_filepath = f"chat_history/{character_config_key}_history.txt"
     use_elevenlabs_voice = character_info.get("use_elevenlabs_voice", True)
     elevenlabs_voice = character_info.get("elevenlabs_voice", None)
+    azure_voice_name = character_info.get("azure_voice_name", "en-US-AvaMultilingualNeural")
 
     # setup our libraries
     if use_elevenlabs_voice and elevenlabs_voice is not None:
         elevenlabs_manager = ElevenLabsManager(elevenlabs_api_key=token_config.get("elevenlabs_api_key", None))
+    
     speechtotext_manager = SpeechToTextManager(azure_tts_key=token_config.get("azure_tts_key", None), azure_tts_region=token_config.get("azure_tts_region", None))
     openai_manager = OpenAiManager(openai_api_key=token_config.get("openai_api_key", None))
     audio_manager = AudioManager()
@@ -49,6 +51,11 @@ if __name__ == '__main__':
     if first_system_message is not None:
         openai_manager.chat_history.append(first_system_message)
 
+    message_replacements = character_info.get("message_replacements", None)
+
+    with open(chat_history_filepath, "w") as file:
+        file.write("")
+
     # start logic loops
     print("[green]Starting the loop, press num 7 to begin")
     while True:
@@ -66,6 +73,14 @@ if __name__ == '__main__':
         # send question to openai
         openai_result = openai_manager.chat_with_history(prompt=mic_result)
         print("openai_result: ", openai_result)
+
+        if message_replacements is not None:
+            for replacement_info in message_replacements:
+                to_replace = replacement_info.get("to_replace", None)
+                replace_with = replacement_info.get("replace_with", None)
+                if to_replace and replace_with:
+                    openai_result = openai_result.replace(to_replace, replace_with)
+
         # write the results to chat_history as a backup
         with open(chat_history_filepath, "w") as file:
             file.write(str(openai_manager.chat_history))
@@ -80,7 +95,10 @@ if __name__ == '__main__':
         # play the audio
         if use_elevenlabs_voice:
             print("play audio")
-            audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=True, play_using_music=True)
-
+            audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=False, play_using_music=True)
+        else:
+            print("play audio using azure tts")
+            speechtotext_manager.texttospeech_from_text(azure_voice_name=azure_voice_name, text_to_speak=openai_result)
+        
         # hide the configured image
         print("\n---\nFinished processing dialogue.\nReady for next input.\n---\n")
