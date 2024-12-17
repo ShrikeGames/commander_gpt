@@ -1,11 +1,13 @@
 import time
 import keyboard
 import sys
-from lib.utils import read_config_file
+import pygame
+from lib.utils import read_config_file, update_screen
 from lib.azure_speech_to_text import SpeechToTextManager
 from lib.openai_chat import OpenAiManager
 from lib.eleven_labs import ElevenLabsManager
 from lib.audio_player import AudioManager
+
 
 if __name__ == '__main__':
     # read token_config file
@@ -56,6 +58,16 @@ if __name__ == '__main__':
     with open(chat_history_filepath, "w") as file:
         file.write("")
 
+    image_idle_path = character_info.get("image_idle", None)
+    image_talking_path = character_info.get("image_talking", None)
+    if image_idle_path and image_talking_path:
+        idle_image = pygame.image.load(f"assets/images/{image_idle_path}")
+        talking_image = pygame.image.load(f"assets/images/{image_talking_path}")
+        pygame.init()
+        pygame.display.set_caption('gpt')
+        screen = pygame.display.set_mode((1024, 1024))
+        update_screen(screen, idle_image)
+
     # start logic loops
     print("[green]Starting the loop, press num 7 to begin")
     while True:
@@ -73,8 +85,11 @@ if __name__ == '__main__':
         # send question to openai
         openai_result = openai_manager.chat_with_history(prompt=mic_result)
         print("openai_result: ", openai_result)
+        if openai_result is None:
+            print("The AI had nothing to say or something went wrong.")
+            continue
 
-        if message_replacements is not None:
+        if message_replacements is not None and openai_result is not None:
             for replacement_info in message_replacements:
                 to_replace = replacement_info.get("to_replace", None)
                 replace_with = replacement_info.get("replace_with", None)
@@ -89,9 +104,10 @@ if __name__ == '__main__':
         if use_elevenlabs_voice:
             print("convert text to audio")
             elevenlabs_output = elevenlabs_manager.text_to_audio(input_text=openai_result, voice=elevenlabs_voice, save_as_wave=True, subdirectory="assets/audio")
-
-        # show configured image
-
+        
+        # show talking image
+        update_screen(screen, talking_image)
+        
         # play the audio
         if use_elevenlabs_voice:
             print("play audio")
@@ -99,6 +115,7 @@ if __name__ == '__main__':
         else:
             print("play audio using azure tts")
             speechtotext_manager.texttospeech_from_text(azure_voice_name=azure_voice_name, text_to_speak=openai_result)
-        
-        # hide the configured image
+        # show idle image
+        update_screen(screen, idle_image)
+
         print("\n---\nFinished processing dialogue.\nReady for next input.\n---\n")
