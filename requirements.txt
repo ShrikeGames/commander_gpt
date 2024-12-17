@@ -1,0 +1,12 @@
+azure-cognitiveservices-speech
+anyio
+elevenlabs
+keyboard
+mutagen
+openai
+pydantic
+pygame-ce
+rich
+soundfile
+tiktoken
+pyaudio
