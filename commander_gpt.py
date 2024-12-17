@@ -4,7 +4,7 @@ import sys
 from lib.utils import read_config_file
 from lib.azure_speech_to_text import SpeechToTextManager
 from lib.openai_chat import OpenAiManager
-#from lib.eleven_labs import ElevenLabsManager
+from lib.eleven_labs import ElevenLabsManager
 from lib.audio_player import AudioManager
 
 if __name__ == '__main__':
@@ -29,11 +29,11 @@ if __name__ == '__main__':
     elevenlabs_voice = character_info.get("elevenlabs_voice", None)
 
     # setup our libraries
-    #if use_elevenlabs_voice and elevenlabs_voice is not None:
-    #    elevenlabs_manager = ElevenLabsManager(elevenlabs_api_key=token_config.get("elevenlabs_api_key", None))
+    if use_elevenlabs_voice and elevenlabs_voice is not None:
+        elevenlabs_manager = ElevenLabsManager(elevenlabs_api_key=token_config.get("elevenlabs_api_key", None))
     speechtotext_manager = SpeechToTextManager(azure_tts_key=token_config.get("azure_tts_key", None), azure_tts_region=token_config.get("azure_tts_region", None))
     openai_manager = OpenAiManager(openai_api_key=token_config.get("openai_api_key", None))
-    #audio_manager = AudioManager()
+    audio_manager = AudioManager()
 
     # determine what keys we'll listen for to start and stop mic recording
     mic_start_key = character_info.get("input_voice_start_button", "F4")
@@ -67,18 +67,20 @@ if __name__ == '__main__':
         openai_result = openai_manager.chat_with_history(prompt=mic_result)
         print("openai_result: ", openai_result)
         # write the results to chat_history as a backup
-        #with open(chat_history_filepath, "w") as file:
-        #    file.write(str(openai_manager.chat_history))
+        with open(chat_history_filepath, "w") as file:
+            file.write(str(openai_manager.chat_history))
         
         # submit to 11labs to get audio
-        #if use_elevenlabs_voice:
-        #    elevenlabs_output = elevenlabs_manager.text_to_audio(input_text=openai_result, voice=elevenlabs_voice, save_as_wave=True, subdirectory="assets/audio")
+        if use_elevenlabs_voice:
+            print("convert text to audio")
+            elevenlabs_output = elevenlabs_manager.text_to_audio(input_text=openai_result, voice=elevenlabs_voice, save_as_wave=True, subdirectory="assets/audio")
 
         # show configured image
 
         # play the audio
-        #if use_elevenlabs_voice:
-        #audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=True, play_using_music=True)
+        if use_elevenlabs_voice:
+            print("play audio")
+            audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=True, play_using_music=True)
 
         # hide the configured image
         print("\n---\nFinished processing dialogue.\nReady for next input.\n---\n")

@@ -1,12 +1,14 @@
 azure-cognitiveservices-speech
 anyio
-elevenlabs
+elevenlabs==0.2.8
 keyboard
 mutagen
 openai
 pydantic
-pygame-ce
+pygame==2.3.0
+pygame_ce==2.3.0
 rich
 soundfile
 tiktoken
-pyaudio
+PyAudio==0.2.14
+pydub==0.25.1
