@@ -17,3 +17,6 @@ Create a token_config.json in the configs folder with the following format
 Update character_config.json with specifics to your character.
 You can switch between using 11lab voices or not (if not then it will use azure TTS instead)
 11labs seems a lot more expensive, and azure gives you plenty of monthly credits.
+
+DO NOT RUN AS SUDO IF ON LINUX.
+Mainly because you'll have to deal with endless impossible to solve issues around audio devices already being in use when you have OBS open at the same time (or music playing, etc).

@@ -1,5 +1,4 @@
 import time
-import keyboard
 import sys
 import pygame
 from lib.utils import read_config_file, update_screen
@@ -7,7 +6,8 @@ from lib.azure_speech_to_text import SpeechToTextManager
 from lib.openai_chat import OpenAiManager
 from lib.eleven_labs import ElevenLabsManager
 from lib.audio_player import AudioManager
-
+from pynput import keyboard
+from pynput.keyboard import KeyCode
 
 if __name__ == '__main__':
     # read token_config file
@@ -40,8 +40,8 @@ if __name__ == '__main__':
     audio_manager = AudioManager()
 
     # determine what keys we'll listen for to start and stop mic recording
-    mic_start_key = character_info.get("input_voice_start_button", "F4")
-    mic_stop_key = character_info.get("input_voice_end_button", "p")
+    mic_start_key = character_info.get("input_voice_start_button", "home")
+    mic_stop_key = character_info.get("input_voice_end_button", "end")
     print("mic_start_key", mic_start_key)
     print("mic_stop_key", mic_stop_key)
     
@@ -68,13 +68,18 @@ if __name__ == '__main__':
         screen = pygame.display.set_mode((1024, 1024))
         update_screen(screen, idle_image)
 
+    def start_recording_button_released(key):
+        if str(key) == str(mic_start_key):
+            # Stop listener
+            return False
+        
     # start logic loops
-    print("[green]Starting the loop, press num 7 to begin")
+    print(f"Starting the loop, press num {mic_start_key} to begin")
     while True:
         # Wait until user presses the mic_start_key
-        if not keyboard.is_pressed(mic_start_key):
-            time.sleep(0.1)
-            continue
+        with keyboard.Listener(on_release=start_recording_button_released) as listener:
+            listener.join()
+
         print("Listening to mic")
         # get mic result
         mic_result = speechtotext_manager.speechtotext_from_mic_continuous(stop_key=mic_stop_key)
@@ -111,7 +116,7 @@ if __name__ == '__main__':
         # play the audio
         if use_elevenlabs_voice:
             print("play audio")
-            audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=False, play_using_music=True)
+            audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=False, play_using_music=False)
         else:
             print("play audio using azure tts")
             speechtotext_manager.texttospeech_from_text(azure_voice_name=azure_voice_name, text_to_speak=openai_result)

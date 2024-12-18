@@ -15,8 +15,8 @@
                 "replace_with": "X-COM"
             }
         ],
-        "input_voice_start_button": "num 7",
-        "input_voice_end_button": "num 8",
+        "input_voice_start_button": "Key.home",
+        "input_voice_end_button": "Key.end",
         "image_idle": "commander_idle.png",
         "image_talking": "commander_talking.png"
     }
