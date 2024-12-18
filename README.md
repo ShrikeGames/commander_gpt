@@ -23,4 +23,4 @@ Mainly because you'll have to deal with endless impossible to solve issues aroun
 
 TODO
 - Option to restore conversation from logged history
-- Don't always need to send the entire history with each request, it's not all important
+- Add subtitles for both human and AI to the screen (optionally)
