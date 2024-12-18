@@ -22,5 +22,5 @@ DO NOT RUN AS SUDO IF ON LINUX.
 Mainly because you'll have to deal with endless impossible to solve issues around audio devices already being in use when you have OBS open at the same time (or music playing, etc).
 
 TODO
-- Add support for using different keys in order to change whether you send just text, or text and a screenshot
 - Option to restore conversation from logged history
+- Don't always need to send the entire history with each request, it's not all important

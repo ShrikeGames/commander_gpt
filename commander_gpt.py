@@ -10,7 +10,6 @@ from lib.eleven_labs import ElevenLabsManager
 from lib.audio_player import AudioManager
 from rich import print
 
-
 class CommanderGPT:
 
     def __init__(self):
@@ -81,19 +80,31 @@ class CommanderGPT:
         
 
         self.state = None
+        self.screen_shot_enabled = False
         
         # Create thread to handle the AI stuff
         thread_chatgpt = threading.Thread(target=self.handle_chatgpt)
 
+        non_blocking_toggles = threading.Thread(target=self.handle_non_blocking_toggles)
+
         # Start the thread
         thread_chatgpt.start()
+        non_blocking_toggles.start()
+
+    def handle_non_blocking_toggles(self):
+        while True:
+            # Wait until user presses the mic_start_key
+            wait_until_key(key_to_match=self.mic_start_with_screenshot_key)
+            self.screen_shot_enabled = not self.screen_shot_enabled
+            print("Send screenshot with next message? ", self.screen_shot_enabled)
 
     def update_screen(self, image, pos=(0,0)):
         self.screen.fill((0, 255, 0))
         if image:
             self.screen.blit(image, pos)
         pygame.display.update()
-
+    
+    
     def handle_chatgpt(self):
 
         # start logic loops
@@ -110,7 +121,10 @@ class CommanderGPT:
             print("Done listening to mic")
             print("mic_result:\n[green]", mic_result)
             # send question to openai
-            openai_result = self.openai_manager.chat_with_history(prompt=mic_result, monitor_to_screenshot=self.monitor_to_screenshot)
+            monitor_number = -1
+            if self.screen_shot_enabled:
+                monitor_number = self.monitor_to_screenshot
+            openai_result = self.openai_manager.chat_with_history(prompt=mic_result, monitor_to_screenshot=monitor_number)
             print("openai_result:\n[green]", openai_result)
             if openai_result is None:
                 print("[red]The AI had nothing to say or something went wrong.")
@@ -140,12 +154,12 @@ class CommanderGPT:
                 self.audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=True, play_using_music=False)
             else:
                 print("play audio using azure tts")
-                self.speechtotext_manager.texttospeech_from_text(azure_voice_name=self.azure_voice_name, azure_voice_style="", supported_prefixes=self.supported_prefixes, text_to_speak=openai_result)
+                self.speechatotext_manager.texttospeech_from_text(azure_voice_name=self.azure_voice_name, azure_voice_style="", supported_prefixes=self.supported_prefixes, text_to_speak=openai_result)
             
             self.state="idle"
 
             print("\n---\n[green]Finished processing dialogue.\nReady for next input.\n---\n")
-
+            
 if __name__ == '__main__':
     commander_gpt = CommanderGPT()
     # main thread will handle visuals and minor events
@@ -157,9 +171,9 @@ if __name__ == '__main__':
                 commander_gpt.character_pos = (commander_gpt.character_pos[0], commander_gpt.character_pos[1]-pop_up_speed)
             else:
                 commander_gpt.character_pos = (0, 0)
-            if random.randrange(0,100) < 50:
+            if random.randrange(0,100) < 25:
                 commander_gpt.update_screen(commander_gpt.talking_image, commander_gpt.character_pos)
-            elif random.randrange(0,100) < 50:
+            elif random.randrange(0,100) < 25:
                 commander_gpt.update_screen(commander_gpt.idle_image, commander_gpt.character_pos)
             
         elif commander_gpt.state == "idle":

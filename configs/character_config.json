@@ -73,8 +73,8 @@
         ],
         "input_voice_start_button": "Key.home",
         "input_voice_end_button": "Key.end",
-        "input_voice_start_button_with_screenshot": "Key.f4",
-        "monitor_to_screenshot": -1,
+        "input_voice_start_button_with_screenshot": "Key.shift",
+        "monitor_to_screenshot": 3,
         "image_idle": "commander_idle.png",
         "image_talking": "commander_talking.png"
     }
