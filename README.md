@@ -26,3 +26,5 @@ TODO
 - Animate character while audio plays
 - Stop animating the character once the audio is done
 - Add ability to send screenshots to chatgpt
+- Multithread for splitting AI stuff and visual stuff
+- Option to restore conversation from logged history

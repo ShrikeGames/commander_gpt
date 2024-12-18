@@ -3,11 +3,11 @@
         "name": "Commander",
         "use_elevenlabs_voice": false,
         "elevenlabs_voice": "Alice",
-        "azure_voice_name": "en-US-EvelynMultilingualNeural",
+        "azure_voice_name": "en-US-SerenaMultilingualNeural",
         "history_file": "commander_chat_history.txt",
         "first_system_message": {
             "role": "system",
-            "contents": ["You are a person simply refered to as \"Commander\" or \"The Commander\".",
+            "content": ["You are a person simply refered to as \"Commander\" or \"The Commander\".",
             "The world is being invaded by an Alien speciies and a secret goverment operation named XCOM has been started to resist the aliens.",
             "Commander were chosen to lead the XCOM organization, including being in charge of what to research, what threats to respond to, what soldiers to field in battle, and to give the soldiers orders during missions.",
             "It is expected there will be casulties but Commander, it is your job is to use your reknowned genius strategies and tactics to bring XCOM to victory at any cost and save the world from the Alien invaders.",
@@ -32,9 +32,38 @@
             "12) Laugh mockingly by saying fufufu.",
             "13) Be stern.",
             "14) Be unpredictable.",
-            "Good luck, Commander."],
-            "content": ""
-           
+            "To express your mood you may use the following prefixes for your responses:",
+            "(empathetic) When you are empathetic",
+            "(excited) When you are excited",
+            "(friendly) When you want to be friendly",
+            "(relieved) When you are relieved",
+            "(sad) When you are sad",
+            "(serious) When you want to be serious",
+            "(shy) When you are quiet or shy",
+            "(random) When you are feeling like being random",
+            "Good luck, Commander."]
+        },
+        "supported_prefixes": {
+            "(empathetic)": "empathetic",
+            "(excited)" : "excited",
+            "(friendly)" : "friendly",
+            "(relieved)" : "relieved",
+            "(sad)" : "sad",
+            "(serious)" : "serious",
+            "(shy)" : "shy",
+            "(random)" : "random"
+        },
+        "unsupported_prefixes": {
+            "(angry)" : "angry",
+            "(cheerful)" : "cheerful",
+            "(friendly)": "friendly",
+            "(hopeful)" : "hopeful",
+            "(shouting)" : "shouting",
+            "(shout)" : "shouting",
+            "(terrified)" : "terrified",
+            "(unfriendly)" : "unfriendly",
+            "(whispering)" : "whispering",
+            "(whisper)" : "whispering"
         },
         "message_replacements": [
             {

@@ -1,13 +1,11 @@
 import time
 import sys
 import pygame
-from lib.utils import read_config_file, update_screen
+from lib.utils import read_config_file, update_screen, wait_until_key
 from lib.azure_speech_to_text import SpeechToTextManager
 from lib.openai_chat import OpenAiManager
 from lib.eleven_labs import ElevenLabsManager
 from lib.audio_player import AudioManager
-from pynput import keyboard
-from pynput.keyboard import KeyCode
 from rich import print
 
 if __name__ == '__main__':
@@ -50,12 +48,13 @@ if __name__ == '__main__':
         exit("No elevenlabs voice was provided.")
     
     first_system_message = character_info.get("first_system_message", None)
-    print("first_system_message:", first_system_message)
     if first_system_message is not None:
-        first_system_message["content"] = "\n".join(first_system_message["contents"])
+        first_system_message["content"] = "\n".join(first_system_message["content"])
+        print("first_system_message:", first_system_message)
         openai_manager.chat_history.append(first_system_message)
 
     message_replacements = character_info.get("message_replacements", None)
+    supported_prefixes = character_info.get("supported_prefixes", None)
 
     with open(chat_history_filepath, "w") as file:
         file.write("")
@@ -71,29 +70,23 @@ if __name__ == '__main__':
         update_screen(screen, None)
     character_pos = (0, 0)
     
-    def start_recording_button_released(key):
-        if str(key) == str(mic_start_key):
-            # Stop listener
-            return False
         
     # start logic loops
     print(f"[green]Starting the loop, press num {mic_start_key} to begin")
     while True:
-        print("Waiting")
+        print("[green]Waiting")
         # Wait until user presses the mic_start_key
-        with keyboard.Listener(on_release=start_recording_button_released) as listener:
-            listener.join()
+        wait_until_key(key_to_match=mic_start_key)
 
         print("Listening to mic")
         # get mic result
         mic_result = speechtotext_manager.speechtotext_from_mic_continuous(stop_key=mic_stop_key)
 
-        #mic_result = speechtotext_manager.speechtotext_from_file("question.wav")
         print("Done listening to mic")
-        print("mic_result: ", mic_result)
+        print("mic_result:\n[green]", mic_result)
         # send question to openai
         openai_result = openai_manager.chat_with_history(prompt=mic_result)
-        print("openai_result: ", openai_result)
+        print("openai_result:\n[green]", openai_result)
         if openai_result is None:
             print("[red]The AI had nothing to say or something went wrong.")
             continue
@@ -124,7 +117,7 @@ if __name__ == '__main__':
             audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=True, play_using_music=False)
         else:
             print("play audio using azure tts")
-            speechtotext_manager.texttospeech_from_text(azure_voice_name=azure_voice_name, text_to_speak=openai_result)
+            speechtotext_manager.texttospeech_from_text(azure_voice_name=azure_voice_name, azure_voice_style="", supported_prefixes=supported_prefixes, text_to_speak=openai_result)
         # remove character from screen
         update_screen(screen, None)
 
