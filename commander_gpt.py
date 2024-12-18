@@ -63,6 +63,7 @@ class CommanderGPT:
 
         self.message_replacements = self.character_info.get("message_replacements", None)
         self.supported_prefixes = self.character_info.get("supported_prefixes", None)
+        self.max_history_length_messages = self.character_info.get("max_history_length_messages", 100)
 
         with open(self.chat_history_filepath, "w") as file:
             file.write("")
@@ -124,7 +125,7 @@ class CommanderGPT:
             monitor_number = -1
             if self.screen_shot_enabled:
                 monitor_number = self.monitor_to_screenshot
-            openai_result = self.openai_manager.chat_with_history(prompt=mic_result, monitor_to_screenshot=monitor_number)
+            openai_result = self.openai_manager.chat_with_history(prompt=mic_result, monitor_to_screenshot=monitor_number, max_history_length_messages=self.max_history_length_messages)
             print("openai_result:\n[green]", openai_result)
             if openai_result is None:
                 print("[red]The AI had nothing to say or something went wrong.")
@@ -154,7 +155,7 @@ class CommanderGPT:
                 self.audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=True, play_using_music=False)
             else:
                 print("play audio using azure tts")
-                self.speechatotext_manager.texttospeech_from_text(azure_voice_name=self.azure_voice_name, azure_voice_style="", supported_prefixes=self.supported_prefixes, text_to_speak=openai_result)
+                self.speechtotext_manager.texttospeech_from_text(azure_voice_name=self.azure_voice_name, azure_voice_style="", supported_prefixes=self.supported_prefixes, text_to_speak=openai_result)
             
             self.state="idle"
 
