@@ -2,7 +2,7 @@ azure-cognitiveservices-speech
 anyio
 elevenlabs==0.2.8
 mutagen
-openai
+openai==1.58.1
 pydantic
 pygame==2.3.0
 pygame_ce==2.3.0
@@ -12,3 +12,4 @@ tiktoken
 PyAudio==0.2.14
 pydub==0.25.1
 pynput
+mss
