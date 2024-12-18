@@ -8,6 +8,7 @@ from lib.eleven_labs import ElevenLabsManager
 from lib.audio_player import AudioManager
 from pynput import keyboard
 from pynput.keyboard import KeyCode
+from rich import print
 
 if __name__ == '__main__':
     # read token_config file
@@ -51,6 +52,7 @@ if __name__ == '__main__':
     first_system_message = character_info.get("first_system_message", None)
     print("first_system_message:", first_system_message)
     if first_system_message is not None:
+        first_system_message["content"] = "\n".join(first_system_message["contents"])
         openai_manager.chat_history.append(first_system_message)
 
     message_replacements = character_info.get("message_replacements", None)
@@ -66,16 +68,18 @@ if __name__ == '__main__':
         pygame.init()
         pygame.display.set_caption('gpt')
         screen = pygame.display.set_mode((1024, 1024))
-        update_screen(screen, idle_image)
-
+        update_screen(screen, None)
+    character_pos = (0, 0)
+    
     def start_recording_button_released(key):
         if str(key) == str(mic_start_key):
             # Stop listener
             return False
         
     # start logic loops
-    print(f"Starting the loop, press num {mic_start_key} to begin")
+    print(f"[green]Starting the loop, press num {mic_start_key} to begin")
     while True:
+        print("Waiting")
         # Wait until user presses the mic_start_key
         with keyboard.Listener(on_release=start_recording_button_released) as listener:
             listener.join()
@@ -91,7 +95,7 @@ if __name__ == '__main__':
         openai_result = openai_manager.chat_with_history(prompt=mic_result)
         print("openai_result: ", openai_result)
         if openai_result is None:
-            print("The AI had nothing to say or something went wrong.")
+            print("[red]The AI had nothing to say or something went wrong.")
             continue
 
         if message_replacements is not None and openai_result is not None:
@@ -111,16 +115,17 @@ if __name__ == '__main__':
             elevenlabs_output = elevenlabs_manager.text_to_audio(input_text=openai_result, voice=elevenlabs_voice, save_as_wave=True, subdirectory="assets/audio")
         
         # show talking image
-        update_screen(screen, talking_image)
+        character_pos = (0, 0)
+        update_screen(screen, talking_image, character_pos)
         
         # play the audio
         if use_elevenlabs_voice:
             print("play audio")
-            audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=False, play_using_music=False)
+            audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=True, play_using_music=False)
         else:
             print("play audio using azure tts")
             speechtotext_manager.texttospeech_from_text(azure_voice_name=azure_voice_name, text_to_speak=openai_result)
-        # show idle image
-        update_screen(screen, idle_image)
+        # remove character from screen
+        update_screen(screen, None)
 
-        print("\n---\nFinished processing dialogue.\nReady for next input.\n---\n")
+        print("\n---\n[green]Finished processing dialogue.\nReady for next input.\n---\n")

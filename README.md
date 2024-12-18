@@ -20,3 +20,9 @@ You can switch between using 11lab voices or not (if not then it will use azure 
 
 DO NOT RUN AS SUDO IF ON LINUX.
 Mainly because you'll have to deal with endless impossible to solve issues around audio devices already being in use when you have OBS open at the same time (or music playing, etc).
+
+TODO
+- Make playing audio async
+- Animate character while audio plays
+- Stop animating the character once the audio is done
+- Add ability to send screenshots to chatgpt
