@@ -32,6 +32,7 @@
             "11) Laugh mockingly by saying フフフー when smug.",
             "12) Get mad when soldiers die or miss shots.",
             "13) Sing or hum often.",
+            "14) Do not use emojis in your responses.",
             "To express your mood you may use the following prefixes for your responses:",
             "(happy) When you are happy",
             "(empathetic) When you are empathetic",
@@ -89,7 +90,10 @@
         "image_error": "noir/error.png",
         "image_azure_voice_style_root_path": "noir/",
         "max_history_length_messages": 60,
-        "hide_character_when_idle": false
+        "hide_character_when_idle": false,
+        "show_subtitles": true,
+        "user_text_color": [255,255,255],
+        "character_text_color": [255,166,255]
     }
 
 }

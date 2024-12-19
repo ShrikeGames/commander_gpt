@@ -60,7 +60,6 @@ DO NOT RUN AS SUDO IF ON LINUX.
 
 
 ## TODOs
-- Replace pygame with an easier frontend
+- (Maybe) Replace pygame with an easier frontend
 - Option to restore conversation from logged history
-- Add subtitles for both human and AI to the screen (optionally)
-- Instead of sending images directly to OpenAI use another service to describe the image and send OpenAI the description
+- (Maybe) Instead of sending images directly to OpenAI use another service to describe the image and send OpenAI the description

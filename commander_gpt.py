@@ -3,7 +3,8 @@ import threading
 import sys
 import pygame
 import random
-from lib.utils import read_config_file, wait_until_key
+from pygame import Rect
+from lib.utils import read_config_file, wait_until_key, display_text_with_wrap
 from lib.azure_speech_to_text import SpeechToTextManager
 from lib.openai_chat import OpenAiManager
 from lib.eleven_labs import ElevenLabsManager
@@ -84,8 +85,11 @@ class CommanderGPT:
         self.image_azure_voice_style_root_path = self.character_info.get("image_azure_voice_style_root_path", None)
         self.character_pos = (0, SCREEN_HEIGHT)
         self.subtitles = None
+        self.show_subtitles = self.character_info.get("show_subtitles", True)
         self.voice_style = None
         self.voice_image = None
+        self.user_text_color = self.character_info.get("user_text_color", [255, 255, 255])
+        self.character_text_color = self.character_info.get("character_text_color", [255, 124, 124])
         self.azure_voice_style_images = {
 
         }
@@ -104,7 +108,7 @@ class CommanderGPT:
 
             pygame.init()
             pygame.display.set_caption('gpt')
-            #self.font = pygame.freetype.Font("assets/fonts/NotoSerifCJK-Regular.ttc", 14)
+            self.font = pygame.font.Font("assets/fonts/NotoSerifCJK-Regular.ttc", 42)
             self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
             self.update_screen(None, self.character_pos)
         
@@ -138,8 +142,9 @@ class CommanderGPT:
         elif image:
             self.screen.blit(image, pos)
         
-        #if self.subtitles:
-        #    self.font.render_to(self.screen, (20, 1024-40), self.subtitles, (0, 0, 0))
+        if self.subtitles and self.show_subtitles:
+            display_text_with_wrap(screen=self.screen, font=self.font, text=self.subtitles, box_width=SCREEN_WIDTH-20, xpos=10, ypos=10, color=self.voice_color)
+
         pygame.display.update()
     
     
@@ -154,8 +159,11 @@ class CommanderGPT:
 
             print("[yellow]\nListening to mic")
             self.state = "listening"
+            self.subtitles = None
+            self.voice_color = self.user_text_color
+            
             # get mic result
-            mic_result = self.speechtotext_manager.speechtotext_from_mic_continuous(stop_key=self.mic_stop_key)
+            mic_result = self.speechtotext_manager.speechtotext_from_mic_continuous(stop_key=self.mic_stop_key, commander_gpt=self)
             self.subtitles = mic_result
             print("[green]\nDone listening to mic")
             self.state = "thinking"
@@ -165,7 +173,7 @@ class CommanderGPT:
             if self.screen_shot_enabled:
                 monitor_number = self.monitor_to_screenshot
             openai_result = self.openai_manager.chat_with_history(prompt=mic_result, monitor_to_screenshot=monitor_number, max_history_length_messages=self.max_history_length_messages)
-            
+            self.subtitles = None
             if openai_result is None:
                 print("[red]\nThe AI had nothing to say or something went wrong.")
                 self.state="error"
@@ -178,8 +186,7 @@ class CommanderGPT:
                     if to_replace and replace_with:
                         openai_result = openai_result.replace(to_replace, replace_with)
             
-            self.subtitles = openai_result
-
+            
             # write the results to chat_history as a backup
             with open(self.chat_history_filepath, "w") as file:
                 file.write(str(self.openai_manager.chat_history))
@@ -190,6 +197,8 @@ class CommanderGPT:
                 elevenlabs_output = self.elevenlabs_manager.text_to_audio(input_text=openai_result, voice=self.elevenlabs_voice, save_as_wave=True, subdirectory="assets/audio")
             
             self.state = "talking"
+            self.voice_color = self.character_text_color
+            self.subtitles = openai_result
             
             # play the audio
             if self.use_elevenlabs_voice:
