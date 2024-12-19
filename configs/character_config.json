@@ -84,6 +84,9 @@
         "monitor_to_screenshot": 3,
         "image_idle": "noir/idle.png",
         "image_talking": "noir/talking.png",
+        "image_listening": "noir/listening.png",
+        "image_thinking": "noir/thinking.png",
+        "image_error": "noir/error.png",
         "image_azure_voice_style_root_path": "noir/",
         "max_history_length_messages": 60,
         "hide_character_when_idle": false

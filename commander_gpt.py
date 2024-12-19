@@ -77,6 +77,10 @@ class CommanderGPT:
 
         self.image_idle_path = self.character_info.get("image_idle", None)
         self.image_talking_path = self.character_info.get("image_talking", None)
+        self.image_listening_path = self.character_info.get("image_listening", None)
+        self.image_thinking_path = self.character_info.get("image_thinking", None)
+        self.image_error_path = self.character_info.get("image_error", None)
+        
         self.image_azure_voice_style_root_path = self.character_info.get("image_azure_voice_style_root_path", None)
         self.character_pos = (0, SCREEN_HEIGHT)
         self.subtitles = None
@@ -88,6 +92,9 @@ class CommanderGPT:
         if self.image_idle_path and self.image_talking_path:
             self.idle_image = pygame.image.load(f"assets/images/{self.image_idle_path}")
             self.talking_image = pygame.image.load(f"assets/images/{self.image_talking_path}")
+            self.listening_image = pygame.image.load(f"assets/images/{self.image_listening_path}")
+            self.thinking_image = pygame.image.load(f"assets/images/{self.image_thinking_path}")
+            self.error_image = pygame.image.load(f"assets/images/{self.image_error_path}")
             if self.image_azure_voice_style_root_path and self.supported_prefixes:
                 for prefix in self.supported_prefixes:
                     prefix_no_brackets = prefix.replace("(","").replace(")","")
@@ -146,10 +153,12 @@ class CommanderGPT:
             wait_until_key(key_to_match=self.mic_start_key)
 
             print("[yellow]\nListening to mic")
+            self.state = "listening"
             # get mic result
             mic_result = self.speechtotext_manager.speechtotext_from_mic_continuous(stop_key=self.mic_stop_key)
             self.subtitles = mic_result
             print("[green]\nDone listening to mic")
+            self.state = "thinking"
 
             # send question to openai
             monitor_number = -1
@@ -159,6 +168,7 @@ class CommanderGPT:
             
             if openai_result is None:
                 print("[red]\nThe AI had nothing to say or something went wrong.")
+                self.state="error"
                 continue
 
             if self.message_replacements is not None and openai_result is not None:
@@ -226,6 +236,12 @@ if __name__ == '__main__':
             else:
                 commander_gpt.character_pos = (0, 0)
             commander_gpt.update_screen(commander_gpt.idle_image, commander_gpt.character_pos, None)
+        elif commander_gpt.state == "listening":
+            commander_gpt.update_screen(commander_gpt.listening_image, commander_gpt.character_pos, None)
+        elif commander_gpt.state == "thinking":
+            commander_gpt.update_screen(commander_gpt.thinking_image, commander_gpt.character_pos, None)
+        elif commander_gpt.state == "error":
+            commander_gpt.update_screen(commander_gpt.error_image, commander_gpt.character_pos, None)
         else:
             # remove character from screen
             commander_gpt.update_screen(None)
