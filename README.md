@@ -23,12 +23,11 @@ Create a token_config.json in the configs folder with the following format
 }
 ```
 2. Update character_config.json with specifics to your character.
-TODO: Document all parts of it.
-
-You can switch between using 11lab voices or not (if not then it will use azure TTS instead)
-11labs is more expensive, and azure gives you plenty of monthly credits to effectively be free.
-Azure TTS also supports changing the voice style (shouting, sad, excited, etc) depending on the voice selected.
-https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support
+- TODO: Document all parts of it.
+- You can switch between using 11lab voices or not (if not then it will use azure TTS instead)
+- 11labs is more expensive, and azure gives you plenty of monthly credits to effectively be free.
+- Azure TTS also supports changing the voice style (shouting, sad, excited, etc) depending on the voice selected.
+- https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support
 
 3. Add your character's images to assets/images
 4. Start the program by running
@@ -55,8 +54,8 @@ DO NOT RUN AS SUDO IF ON LINUX.
 - Running it as a regular user doesn't seem to have this limitation
 - Tested on Linux Mint
 - The program does not use the "keyboard" library anymore because that requires root access, and nothing else does
-Ensure your API keys are correct.
-Read the terminal output for error messages, they should usually tell you what is wrong.
+- Ensure your API keys are correct.
+- Read the terminal output for error messages, they should usually tell you what is wrong.
 
 
 ## TODOs
