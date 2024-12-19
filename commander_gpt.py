@@ -135,26 +135,26 @@ class CommanderGPT:
     def handle_chatgpt(self):
 
         # start logic loops
-        print(f"[green]Starting the loop, press num {self.mic_start_key} to begin")
+        print(f"[green]\nStarting the loop, press num {self.mic_start_key} to begin")
         while True:
-            print("[green]Waiting")
+            print("[green]\nWaiting")
             # Wait until user presses the mic_start_key
             wait_until_key(key_to_match=self.mic_start_key)
 
-            print("Listening to mic")
+            print("[yellow]\nListening to mic")
             # get mic result
             mic_result = self.speechtotext_manager.speechtotext_from_mic_continuous(stop_key=self.mic_stop_key)
             self.subtitles = mic_result
-            print("Done listening to mic")
+            print("[green]\nDone listening to mic")
 
             # send question to openai
             monitor_number = -1
             if self.screen_shot_enabled:
                 monitor_number = self.monitor_to_screenshot
             openai_result = self.openai_manager.chat_with_history(prompt=mic_result, monitor_to_screenshot=monitor_number, max_history_length_messages=self.max_history_length_messages)
-            print("openai_result:\n[green]", openai_result)
+            
             if openai_result is None:
-                print("[red]The AI had nothing to say or something went wrong.")
+                print("[red]\nThe AI had nothing to say or something went wrong.")
                 continue
 
             if self.message_replacements is not None and openai_result is not None:
@@ -195,7 +195,7 @@ class CommanderGPT:
             
             self.state="idle"
 
-            print("\n---\n[green]Finished processing dialogue.\nReady for next input.\n---\n")
+            print("[green]\n---\nFinished processing dialogue.\nReady for next input.\n---\n")
             
 if __name__ == '__main__':
     commander_gpt = CommanderGPT()
@@ -207,10 +207,10 @@ if __name__ == '__main__':
             if commander_gpt.character_pos[1] >= pop_up_speed:
                 commander_gpt.character_pos = (commander_gpt.character_pos[0], commander_gpt.character_pos[1]-pop_up_speed)
             else:
-                commander_gpt.character_pos = (0, 0)
-            if random.randrange(0,100) < 25:
+                commander_gpt.character_pos = (0, random.randint(0,10))
+            if random.randrange(0,100) < 5:
                 commander_gpt.update_screen(commander_gpt.talking_image, commander_gpt.character_pos, commander_gpt.voice_image)
-            elif random.randrange(0,100) < 25:
+            elif random.randrange(0,100) < 5:
                 commander_gpt.update_screen(commander_gpt.idle_image, commander_gpt.character_pos, None)
             
         elif commander_gpt.state == "idle":
