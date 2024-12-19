@@ -60,9 +60,7 @@ DO NOT RUN AS SUDO IF ON LINUX.
 
 
 ## TODOs
+- Replace pygame with an easier frontend
 - Option to restore conversation from logged history
 - Add subtitles for both human and AI to the screen (optionally)
-- Replace pygame with an easier frontend
-- Have different images for the character based on the voice style/emotion (if any)
 - Instead of sending images directly to OpenAI use another service to describe the image and send OpenAI the description
-- Option to have character always shown instead of hiding when not talking

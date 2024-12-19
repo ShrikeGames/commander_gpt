@@ -38,6 +38,8 @@ class CommanderGPT:
         self.elevenlabs_voice = self.character_info.get("elevenlabs_voice", None)
         self.azure_voice_name = self.character_info.get("azure_voice_name", "en-US-AvaMultilingualNeural")
 
+        self.hide_character_when_idle = self.character_info.get("hide_character_when_idle", True)
+
         # setup our libraries
         if self.use_elevenlabs_voice and self.elevenlabs_voice is not None:
             self.elevenlabs_manager = ElevenLabsManager(elevenlabs_api_key=self.token_config.get("elevenlabs_api_key", None))
@@ -99,14 +101,16 @@ class CommanderGPT:
             self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
             self.update_screen(None, self.character_pos)
         
-
+        
         self.state = None
+        if not self.hide_character_when_idle:
+            self.state = "idle"
+
         self.screen_shot_enabled = False
         
-        # Create thread to handle the AI stuff
-        thread_chatgpt = threading.Thread(target=self.handle_chatgpt)
-
-        non_blocking_toggles = threading.Thread(target=self.handle_non_blocking_toggles)
+        # Create thread to handle the AI stuff, they will terminate if the main process terminates
+        thread_chatgpt = threading.Thread(target=self.handle_chatgpt, daemon=True)
+        non_blocking_toggles = threading.Thread(target=self.handle_non_blocking_toggles, daemon=True)
 
         # Start the thread
         thread_chatgpt.start()
@@ -214,10 +218,13 @@ if __name__ == '__main__':
                 commander_gpt.update_screen(commander_gpt.idle_image, commander_gpt.character_pos, None)
             
         elif commander_gpt.state == "idle":
-            if commander_gpt.character_pos[1] <= SCREEN_HEIGHT-pop_up_speed:
-                commander_gpt.character_pos = (commander_gpt.character_pos[0], commander_gpt.character_pos[1]+pop_up_speed)
+            if commander_gpt.hide_character_when_idle:
+                if commander_gpt.character_pos[1] <= SCREEN_HEIGHT-pop_up_speed:
+                    commander_gpt.character_pos = (commander_gpt.character_pos[0], commander_gpt.character_pos[1]+pop_up_speed)
+                else:
+                    commander_gpt.character_pos = (0, SCREEN_HEIGHT)
             else:
-                commander_gpt.character_pos = (0, SCREEN_HEIGHT)
+                commander_gpt.character_pos = (0, 0)
             commander_gpt.update_screen(commander_gpt.idle_image, commander_gpt.character_pos, None)
         else:
             # remove character from screen
