@@ -1,7 +1,8 @@
-# commander_gpt
-An ntegratation of OpenAI, Azure TTS, and other tech to have a conversation with a fictional character.
-It aims to have a customizable experience without needing to change code, just config files or image files.
+# Commander GPT
+- An integratation of OpenAI, Azure TTS, and other tech to have a conversation with a fictional character.
+- It aims to have a customizable experience without needing to change code, just config files or image files.
 
+## Inspiration
 Based on DougDoug's https://github.com/DougDougGithub/Babagaboosh/tree/main
 
 
