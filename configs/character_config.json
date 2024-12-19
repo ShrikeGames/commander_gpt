@@ -33,21 +33,29 @@
             "13) Be stern.",
             "14) Be unpredictable.",
             "To express your mood you may use the following prefixes for your responses:",
+            "(happy) When you are happy",
             "(empathetic) When you are empathetic",
             "(excited) When you are excited",
             "(friendly) When you want to be friendly",
             "(relieved) When you are relieved",
             "(sad) When you are sad",
+            "(pensive) when pensive",
+            "(worried) When you are worried",
+            "(smug) when you are smug",
             "(serious) When you want to be serious",
             "(shy) When you are quiet or shy",
             "Good luck, Commander."]
         },
         "supported_prefixes": {
+            "(happy)": "friendly",
             "(empathetic)": "empathetic",
             "(excited)" : "excited",
             "(friendly)" : "friendly",
             "(relieved)" : "relieved",
+            "(worried)" : "worried",
+            "(pensive)" : "worried",
             "(sad)" : "sad",
+            "(smug)" : "serious",
             "(serious)" : "serious",
             "(shy)" : "shy"
         },
@@ -73,8 +81,9 @@
         "input_voice_end_button": "Key.end",
         "input_voice_start_button_with_screenshot": "Key.shift",
         "monitor_to_screenshot": 3,
-        "image_idle": "commander_idle.png",
-        "image_talking": "commander_talking.png",
+        "image_idle": "noir/idle.png",
+        "image_talking": "noir/talking.png",
+        "image_azure_voice_style_root_path": "noir/",
         "max_history_length_messages": 30
     }
 

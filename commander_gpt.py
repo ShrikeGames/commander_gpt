@@ -9,8 +9,12 @@ from lib.openai_chat import OpenAiManager
 from lib.eleven_labs import ElevenLabsManager
 from lib.audio_player import AudioManager
 from rich import print
+# height of the window showing the character
+SCREEN_HEIGHT = 720
+SCREEN_WIDTH = 1280
 
 class CommanderGPT:
+    
 
     def __init__(self):
         # read token_config file
@@ -63,6 +67,7 @@ class CommanderGPT:
 
         self.message_replacements = self.character_info.get("message_replacements", None)
         self.supported_prefixes = self.character_info.get("supported_prefixes", None)
+        
         self.max_history_length_messages = self.character_info.get("max_history_length_messages", 100)
 
         with open(self.chat_history_filepath, "w") as file:
@@ -70,13 +75,28 @@ class CommanderGPT:
 
         self.image_idle_path = self.character_info.get("image_idle", None)
         self.image_talking_path = self.character_info.get("image_talking", None)
-        self.character_pos = (0, 1024)
+        self.image_azure_voice_style_root_path = self.character_info.get("image_azure_voice_style_root_path", None)
+        self.character_pos = (0, SCREEN_HEIGHT)
+        self.subtitles = None
+        self.voice_style = None
+        self.voice_image = None
+        self.azure_voice_style_images = {
+
+        }
         if self.image_idle_path and self.image_talking_path:
             self.idle_image = pygame.image.load(f"assets/images/{self.image_idle_path}")
             self.talking_image = pygame.image.load(f"assets/images/{self.image_talking_path}")
+            if self.image_azure_voice_style_root_path and self.supported_prefixes:
+                for prefix in self.supported_prefixes:
+                    prefix_no_brackets = prefix.replace("(","").replace(")","")
+                    file_name = f"{prefix_no_brackets}.png"
+                    voice_style = self.supported_prefixes[prefix]
+                    self.azure_voice_style_images[voice_style] = pygame.image.load(f"assets/images/{self.image_azure_voice_style_root_path}{file_name}")
+
             pygame.init()
             pygame.display.set_caption('gpt')
-            self.screen = pygame.display.set_mode((1024, 1024))
+            #self.font = pygame.freetype.Font("assets/fonts/NotoSerifCJK-Regular.ttc", 14)
+            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
             self.update_screen(None, self.character_pos)
         
 
@@ -99,10 +119,16 @@ class CommanderGPT:
             self.screen_shot_enabled = not self.screen_shot_enabled
             print("Send screenshot with next message? ", self.screen_shot_enabled)
 
-    def update_screen(self, image, pos=(0,0)):
+    def update_screen(self, image, pos=(0,0), voice_image=None):
         self.screen.fill((0, 255, 0))
-        if image:
+        
+        if voice_image:
+            self.screen.blit(voice_image, pos)
+        elif image:
             self.screen.blit(image, pos)
+        
+        #if self.subtitles:
+        #    self.font.render_to(self.screen, (20, 1024-40), self.subtitles, (0, 0, 0))
         pygame.display.update()
     
     
@@ -118,9 +144,9 @@ class CommanderGPT:
             print("Listening to mic")
             # get mic result
             mic_result = self.speechtotext_manager.speechtotext_from_mic_continuous(stop_key=self.mic_stop_key)
-
+            self.subtitles = mic_result
             print("Done listening to mic")
-            print("mic_result:\n[green]", mic_result)
+
             # send question to openai
             monitor_number = -1
             if self.screen_shot_enabled:
@@ -137,6 +163,8 @@ class CommanderGPT:
                     replace_with = replacement_info.get("replace_with", None)
                     if to_replace and replace_with:
                         openai_result = openai_result.replace(to_replace, replace_with)
+            
+            self.subtitles = openai_result
 
             # write the results to chat_history as a backup
             with open(self.chat_history_filepath, "w") as file:
@@ -155,7 +183,15 @@ class CommanderGPT:
                 self.audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=True, play_using_music=False)
             else:
                 print("play audio using azure tts")
-                self.speechtotext_manager.texttospeech_from_text(azure_voice_name=self.azure_voice_name, azure_voice_style="", supported_prefixes=self.supported_prefixes, text_to_speak=openai_result)
+                self.voice_style = None
+                self.voice_image = None
+                if openai_result.startswith("(") and ")" in openai_result:
+                    for prefix in self.supported_prefixes:
+                        if openai_result.startswith(prefix):
+                            self.voice_style = self.supported_prefixes.get(prefix, None)
+                            self.voice_image = self.azure_voice_style_images.get(self.voice_style, None)
+                            openai_result = openai_result.removeprefix(prefix)
+                self.speechtotext_manager.texttospeech_from_text(azure_voice_name=self.azure_voice_name, azure_voice_style=self.voice_style, text_to_speak=openai_result)
             
             self.state="idle"
 
@@ -173,16 +209,16 @@ if __name__ == '__main__':
             else:
                 commander_gpt.character_pos = (0, 0)
             if random.randrange(0,100) < 25:
-                commander_gpt.update_screen(commander_gpt.talking_image, commander_gpt.character_pos)
+                commander_gpt.update_screen(commander_gpt.talking_image, commander_gpt.character_pos, commander_gpt.voice_image)
             elif random.randrange(0,100) < 25:
-                commander_gpt.update_screen(commander_gpt.idle_image, commander_gpt.character_pos)
+                commander_gpt.update_screen(commander_gpt.idle_image, commander_gpt.character_pos, None)
             
         elif commander_gpt.state == "idle":
-            if commander_gpt.character_pos[1] <= 1024-pop_up_speed:
+            if commander_gpt.character_pos[1] <= SCREEN_HEIGHT-pop_up_speed:
                 commander_gpt.character_pos = (commander_gpt.character_pos[0], commander_gpt.character_pos[1]+pop_up_speed)
             else:
-                commander_gpt.character_pos = (0, 1024)
-            commander_gpt.update_screen(commander_gpt.idle_image, commander_gpt.character_pos)
+                commander_gpt.character_pos = (0, SCREEN_HEIGHT)
+            commander_gpt.update_screen(commander_gpt.idle_image, commander_gpt.character_pos, None)
         else:
             # remove character from screen
             commander_gpt.update_screen(None)
