@@ -54,7 +54,7 @@ Create a token_config.json in the configs folder with the following format
 - `screen_shot_enabled`: When starting the app up it will default to having screenshots being enabled if true, or disabled if false. Relates to above.
 - `monitor_to_screenshot`: When sending a screenshot this is the monitor id (EG: 1) to take the screenshot from. Everything on that monitor will be included.
 - `history`: A dictionary of keys containing configurations for the chat history.
- - EG:
+  - EG:
 ```json
 "history": {
     "max_history_length_messages": 100,
@@ -64,7 +64,7 @@ Create a token_config.json in the configs folder with the following format
 - `max_history_length_messages`: The total number of prompts OpenAI will remember in its history, when this limit is passed then older prompts will be deleted. The system prompt will always be kept so that your character remembers its personality and limitations.
 - `restore_previous_history`: If true, the app will (on start up) check if you have a chat history and if so load it so you can continue where you left off. If false, will start a brand new chat history, removing any prior logs for this character.
 - `supported_prefixes`: A dictionary containing Azure TTS Voice Styles that the selected azure_voice_name supports.
-- It is in the format of:
+  - It is in the format of:
 ```json
 "supported_prefixes": {
     "(friendly)": "friendly",
@@ -72,8 +72,8 @@ Create a token_config.json in the configs folder with the following format
     ...
 }
 ```
- - You can map any prefix to any Voice Style that the azure_voice_name supports. This allows the AI to express more emotions than the azure_voice_name actually has and just map them to the smaller limited amount.
- - EG if you wanted the AI to have the same voice for (friendly) and (happy) or (shout), (shouting) and (yell) you could do this:
+  - You can map any prefix to any Voice Style that the azure_voice_name supports. This allows the AI to express more emotions than the azure_voice_name actually has and just map them to the smaller limited amount.
+  - EG if you wanted the AI to have the same voice for (friendly) and (happy) or (shout), (shouting) and (yell) you could do this:
 ```json
 "supported_prefixes": {
     "(friendly)": "friendly",
@@ -85,9 +85,9 @@ Create a token_config.json in the configs folder with the following format
 ```
 - `unsupported_prefixes`: The same but is completely unused, and lets you keep a history of possible prefixes and mappings to easily copy paste in the future.
 - `images`: A dictionary mapping character state to relates images of them in that state.
- - It must contain "idle", "talking", "listening", "thinking", and "error" states. They are used regardless of if using 11labs or Azure TTS.
- - Images should all be the same size for best results, most likely to match the the size of the app (default 1280x720).
- - EG:
+  - It must contain "idle", "talking", "listening", "thinking", and "error" states. They are used regardless of if using 11labs or Azure TTS.
+  - Images should all be the same size for best results, most likely to match the the size of the app (default 1280x720).
+  - EG:
 ```json
 "images": {
     "idle": "noir/idle.png",
@@ -99,12 +99,12 @@ Create a token_config.json in the configs folder with the following format
 ```
 - `image_azure_voice_style_root_path`: The root path to where your character will have any additional images (can be the same as above). It is relative to the `/assets/images` folder.
 - This folder must include an image for every entry in `supported_prefixes` defined above. The filenames must be without the brackets, and be .png.
- - EG:
+  - EG:
 ```json
 "image_azure_voice_style_root_path": "noir/"
 ```
 - `subtitles`: A dictionary of configuration options for customizing the subtitles of you and the character if you want them to show on screen.
- - EG:
+  - EG:
 ```json
 "subtitles": {
     "show_subtitles": true,
@@ -124,9 +124,9 @@ Create a token_config.json in the configs folder with the following format
 More configurations for subtitles may be added in the future, or by request.
 - `background_colour`: The background colour of the app, this allows you to chroma-key remove the background to have just the character and subtitles show up in OBS or other recording/video software. Can be a named colour such as "green" or a hexcode of the format "#00FF00".
 - `first_system_message`: A dictionary containing the `role` which should always be "system", and `content` which is a list of strings.
- - You can add as much or as little as you want to the `content` prompt, and the list is only for the sake of easier formatting, they are concatenated together with `\n` characters before being sent to OpenAI.
- - It is suggested you provide the AI descriptions of who they are, what their goal is, any particular behaviour you want them to have, and any initial information they should always have available to them.
- - You can also give it information about the available azure voice styles you have mapped.
+  - You can add as much or as little as you want to the `content` prompt, and the list is only for the sake of easier formatting, they are concatenated together with `\n` characters before being sent to OpenAI.
+  - It is suggested you provide the AI descriptions of who they are, what their goal is, any particular behaviour you want them to have, and any initial information they should always have available to them.
+  - You can also give it information about the available azure voice styles you have mapped.
 
 3. Add your character's images to assets/images
 It must have one image for each possible state of the character, and mapped voice style. See above documentation on the character_config.json for details.
