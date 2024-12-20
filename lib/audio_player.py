@@ -30,18 +30,16 @@ class AudioManager:
     def __init__(self):
         # Use higher frequency to prevent audio glitching noises
         # Use higher buffer because why not (default is 512)
-        # TODO T.T why
-        #os.environ['SDL_AUDIODRIVER'] = 'pulse'
-        #pygame.mixer.init(frequency=48000, buffer=BUFFER_SIZE)#, devicename="hw:CARD=NVidia,DEV=7")
+        pygame.mixer.init(frequency=48000, buffer=BUFFER_SIZE) 
         return
 
     def play_audio(self, file_path, sleep_during_playback=True, delete_file=False, play_using_music=True):
         """
-        Parameters:
-        file_path (str): path to the audio file
-        sleep_during_playback (bool): means program will wait for length of audio file before returning
-        delete_file (bool): means file is deleted after playback (note that this shouldn't be used for multithreaded function calls)
-        play_using_music (bool): means it will use Pygame Music, if false then uses pygame Sound instead
+        Arguments:
+            file_path (str): path to the audio file
+            sleep_during_playback (bool): means program will wait for length of audio file before returning
+            delete_file (bool): means file is deleted after playback (note that this shouldn't be used for multithreaded function calls)
+            play_using_music (bool): means it will use Pygame Music, if false then uses pygame Sound instead
         """
         if not pygame.mixer.get_init(): # Reinitialize mixer if needed
             pygame.mixer.init(frequency=48000, buffer=BUFFER_SIZE) 
@@ -84,8 +82,8 @@ class AudioManager:
 
     async def play_audio_async(self, file_path):
         """
-        Parameters:
-        file_path (str): path to the audio file
+        Arguments:
+            file_path (str): path to the audio file
         """
         if not pygame.mixer.get_init(): # Reinitialize mixer if needed
             pygame.mixer.init(frequency=48000, buffer=BUFFER_SIZE) 

@@ -6,8 +6,7 @@ from .utils import screenshot_encode_monitor
 class OpenAiManager:
     
     def __init__(self, openai_api_key:str):
-        self.chat_history = [] # Stores the entire conversation
-        # TODO option to load from history file
+        self.chat_history = []
         try:
             self.client = OpenAI(api_key=openai_api_key)
         except Exception as e:
