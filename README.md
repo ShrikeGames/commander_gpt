@@ -224,6 +224,7 @@ DO NOT RUN AS SUDO IF ON LINUX.
 ## TODOs
 - Make the animation match the audio playback's pace
 - Investigate issue where openAI returned some characters that broke the Azure TTS (program still ran but it did not read it aloud)
+- Multiple character support (with shared chat history so they can talk to each other)
 - (Maybe) Would be nice to support full animations or 3D models easily
   - Could look at azure's virtual assistants as one option
 - (Maybe) Instead of sending images directly to OpenAI use another service to describe the image and send OpenAI the description
