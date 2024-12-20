@@ -40,6 +40,7 @@ class CommanderGPT:
         self.use_elevenlabs_voice = self.character_info.get("use_elevenlabs_voice", True)
         self.elevenlabs_voice = self.character_info.get("elevenlabs_voice", None)
         self.azure_voice_name = self.character_info.get("azure_voice_name", "en-US-AvaMultilingualNeural")
+        self.openai_model_name = self.character_info.get("openai_model_name", "gpt-4o")
 
         self.hide_character_when_idle = self.character_info.get("hide_character_when_idle", True)
 
