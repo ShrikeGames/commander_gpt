@@ -5,6 +5,9 @@
 ## Inspiration
 Based on DougDoug's https://github.com/DougDougGithub/Babagaboosh/tree/main
 
+## Video Example
+You can check out this AI (as of 2024-12-19) making all of the decisions in XCOM Enemy Unknown here:
+https://www.youtube.com/watch?v=x0U_EnhkBwI
 
 ## Setup:
 It is suggested to use a virtual environment.
@@ -61,5 +64,4 @@ DO NOT RUN AS SUDO IF ON LINUX.
 
 ## TODOs
 - (Maybe) Replace pygame with an easier frontend
-- Option to restore conversation from logged history
 - (Maybe) Instead of sending images directly to OpenAI use another service to describe the image and send OpenAI the description
