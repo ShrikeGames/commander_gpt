@@ -28,7 +28,7 @@ class CommanderGPTApp:
 
         Args:
             root (tk.Tk): The root Tkinter window.
-            args (list[str]): The command line arguments. Expected [filename, character_name].
+            args (list[str]): Command-line arguments, used to determine the character for the app. Expected [filename, character_name].
         """
         self.init_configs(args)
         self.init_libs()
@@ -44,7 +44,7 @@ class CommanderGPTApp:
         Loads configuration files, sets up character settings, chat history, voice settings, and other app preferences.
 
         Args:
-            args (list): Command-line arguments, used to determine the character for the app.
+            args (list[str]): Command-line arguments, used to determine the character for the app. Expected [filename, character_name].
         """
         print("[yellow]\nLoading Configs")
         # read token_config file
