@@ -12,12 +12,20 @@ https://www.youtube.com/watch?v=x0U_EnhkBwI
 ## Setup:
 It is suggested to use a virtual environment.
 
-1. Install required libraries, note we are using python 3.
+1. Install required libraries, and accounts.
+
+## The Project
+- Clone the repo
+```
+git clone https://github.com/ShrikeGames/commander_gpt.git
+```
+- Install requirements:
+  - Note we are using python 3
 ```
 pip install -r requirements.txt
 ```
 
-Create a token_config.json in the configs folder with the following format
+- Create a token_config.json in the configs folder with the following format
 ```json
 {
     "elevenlabs_api_key": "YOUR KEY HERE",
