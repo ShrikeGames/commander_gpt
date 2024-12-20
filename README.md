@@ -6,7 +6,7 @@
 Based on DougDoug's https://github.com/DougDougGithub/Babagaboosh/tree/main
 
 ## Video Example
-You can check out this AI (as of 2024-12-19) making all of the decisions in XCOM Enemy Unknown here:
+You can check out this AI (as of 2024-12-19, now outdated) making all of the decisions in XCOM Enemy Unknown here:
 https://www.youtube.com/watch?v=x0U_EnhkBwI
 
 ## Setup:
