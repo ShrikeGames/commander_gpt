@@ -18,6 +18,10 @@ Key differences:
 - Easier multi-lingual support (EG: English and Japanese at the same time).
 
 ## Video Example
+### Short Example
+https://github.com/user-attachments/assets/b94c55be-72be-4fcd-8d22-8dc8c9cb4310
+
+### YouTube
 You can check out this AI (as of 2024-12-19, now outdated) making all of the decisions in XCOM Enemy Unknown here:
 https://www.youtube.com/watch?v=x0U_EnhkBwI
 
