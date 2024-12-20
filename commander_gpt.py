@@ -159,6 +159,7 @@ class CommanderGPTApp:
         self.subtitles = None
         self.voice_style = None
         self.voice_image = None
+        self.voice_color = "white"
 
     def init_chat_history(self):
         """Initializes chat history by reading or clearing history.
@@ -166,28 +167,32 @@ class CommanderGPTApp:
         If restoring from a previous history file, it will load it. If not, it clears the history and enters the first system message if available.
         """
         print("[yellow]\nInit Chat History")
-        if self.restore_previous_history and exists(self.chat_history_filepath):
-            # read the existing file and use it
-            self.openai_manager.chat_history = read_config_file(
-                self.chat_history_filepath
-            )
-        else:
-            # otherwise wipe it if it exists
-            with open(self.chat_history_filepath, "w") as file:
-                file.write("")
-            # and enter the first system message if provided
-            if self.first_system_message is not None:
-                first_system_message_stringified = "\n".join(
-                    self.first_system_message["content"]
+        try:
+            if self.restore_previous_history and exists(self.chat_history_filepath):
+                # read the existing file and use it
+                self.openai_manager.chat_history = read_config_file(
+                    self.chat_history_filepath
                 )
-                system_message_formated = {
-                    "role": "system",
-                    "content": [
-                        {"type": "text", "text": first_system_message_stringified}
-                    ],
-                }
-                print("first_system_message:", system_message_formated)
-                self.openai_manager.chat_history.append(system_message_formated)
+                return
+        except Exception as e:
+            print(f"[red]\nFailed to read chat history, will create a new one. {e}")
+    
+        # otherwise wipe it if it exists
+        with open(self.chat_history_filepath, "w") as file:
+            file.write("")
+        # and enter the first system message if provided
+        if self.first_system_message is not None:
+            first_system_message_stringified = "\n".join(
+                self.first_system_message["content"]
+            )
+            system_message_formated = {
+                "role": "system",
+                "content": [
+                    {"type": "text", "text": first_system_message_stringified}
+                ],
+            }
+            print("first_system_message:", system_message_formated)
+            self.openai_manager.chat_history.append(system_message_formated)
 
     def init_libs(self):
         """Initializes the necessary libraries for the app.
@@ -293,7 +298,7 @@ class CommanderGPTApp:
             20,
             text=text,
             font=self.font,
-            fill="white",
+            fill=self.voice_color,
             anchor="n",
             width=SCREEN_WIDTH - 40,
             justify="center",

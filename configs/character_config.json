@@ -99,8 +99,8 @@
         "hide_character_when_idle": false,
         "subtitles": {
             "show_subtitles": true,
-            "user_text_color": [255,255,255],
-            "character_text_color": [255,166,255]
+            "user_text_color": "white",
+            "character_text_color": "pink"
         }
         
     }
