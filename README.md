@@ -64,11 +64,11 @@ DO NOT RUN AS SUDO IF ON LINUX.
 
 ## TODOs
 - Investigate issue where openAI returned some characters that broke the Azure TTS (program still ran but it did not read it aloud)
-- (Maybe) Replace pygame with an easier frontend because it's very manual and limiting
 - (Maybe) Would be nice to support full animations or 3D models easily
-- - Could look at azure's virtual assistants as one option
+  - Could look at azure's virtual assistants as one option
 - (Maybe) Instead of sending images directly to OpenAI use another service to describe the image and send OpenAI the description
-- - This is because openAI refuses to identify anything that seems like it contains real people, or has other unspecified criteria that refuses to process it
+  - This is because openAI refuses to identify anything that seems like it contains real people, or has other unspecified criteria that refuses to process it
 - Refactor, clean up code, add doc strings
+  - Main code has been refactored and cleaned up but the libraries are still a mess.
 - (Maybe) Parse the response from openAI and allow it to control the keyboard/mouse?
-- - Might be some simpler games where that kind of logic could be possible
+  - Might be some simpler games where that kind of logic could be possible

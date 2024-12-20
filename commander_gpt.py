@@ -1,12 +1,10 @@
-import time
+import tkinter as tk
+from PIL import Image, ImageTk
 import threading
 import sys
-import pygame
-import random
 from lib.utils import (
     read_config_file,
     wait_until_key,
-    display_text_with_wrap,
     write_json_file,
 )
 from lib.azure_speech_to_text import SpeechToTextManager
@@ -16,34 +14,60 @@ from lib.audio_player import AudioManager
 from rich import print
 from os.path import exists
 
-# height of the window showing the character
-SCREEN_HEIGHT = 720
 SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 
 
-class CommanderGPT:
-    def __init__(self):
+class CommanderGPTApp:
+    def __init__(self, root, args):
+        """Initializes the app with a canvas, a background image, and subtitle text.
+
+        Sets up the main window, initializes the canvas, loads an image, and draws text with an outline.
+
+        Args:
+            root (tk.Tk): The root Tkinter window.
+        """
+        self.init_configs(args)
+        self.init_libs()
+        self.init_chat_history()
+        self.init_visuals(root)
+        self.init_ai_connections()
+        # start updating main thread
+        self.update()
+
+    def init_configs(self, args):
+        """Initializes configuration settings for the app.
+
+        Loads configuration files, sets up character settings, chat history, voice settings, and other app preferences.
+
+        Args:
+            args (list): Command-line arguments, used to determine the character for the app.
+        """
+        print("[yellow]\nLoading Configs")
         # read token_config file
         self.token_config = read_config_file("configs/token_config.json")
 
         # read character_config file
         self.character_config = read_config_file("configs/character_config.json")
-        if len(sys.argv) < 2:
+        if len(args) < 2:
             exit(
                 "You must provide a character defined in character_config.json. EG: commander_gpt.py commander"
             )
 
         # get character based on name from command line args
-        self.character_config_key = sys.argv[1]
+        self.character_config_key = args[1]
 
         # retrieve character config based on character name
         self.character_info = self.character_config.get(self.character_config_key, None)
         if self.character_info is None:
             exit("The provided character name was not defined in character_config.json")
-
         self.chat_history_filepath = (
             f"chat_history/{self.character_config_key}_history.json"
         )
+        # what model to use with openai
+        self.openai_model_name = self.character_info.get("openai_model_name", "gpt-4o")
+
+        # 11labs configs
         self.use_elevenlabs_voice = self.character_info.get(
             "use_elevenlabs_voice", True
         )
@@ -51,27 +75,10 @@ class CommanderGPT:
         self.azure_voice_name = self.character_info.get(
             "azure_voice_name", "en-US-AvaMultilingualNeural"
         )
-        self.openai_model_name = self.character_info.get("openai_model_name", "gpt-4o")
+        if self.use_elevenlabs_voice and self.elevenlabs_voice is None:
+            exit("No elevenlabs voice was provided.")
 
-        self.hide_character_when_idle = self.character_info.get(
-            "hide_character_when_idle", True
-        )
-
-        # setup our libraries
-        if self.use_elevenlabs_voice and self.elevenlabs_voice is not None:
-            self.elevenlabs_manager = ElevenLabsManager(
-                elevenlabs_api_key=self.token_config.get("elevenlabs_api_key", None)
-            )
-
-        self.speechtotext_manager = SpeechToTextManager(
-            azure_tts_key=self.token_config.get("azure_tts_key", None),
-            azure_tts_region=self.token_config.get("azure_tts_region", None),
-        )
-        self.openai_manager = OpenAiManager(
-            openai_api_key=self.token_config.get("openai_api_key", None)
-        )
-        self.audio_manager = AudioManager()
-
+        # key bindings configs
         # determine what keys we'll listen for to start and stop mic recording
         self.mic_start_key = self.character_info.get(
             "input_voice_start_button", "Key.home"
@@ -80,30 +87,84 @@ class CommanderGPT:
         self.mic_start_with_screenshot_key = self.character_info.get(
             "input_voice_start_button_with_screenshot", "Key.f4"
         )
+
+        # screenshot configs
+        # whether to be enabled by default or not
+        self.screen_shot_enabled = self.character_info.get("screen_shot_enabled", False)
         self.monitor_to_screenshot = self.character_info.get(
             "monitor_to_screenshot", -1
         )
-        print("mic_start_key", self.mic_start_key)
-        print("mic_stop_key", self.mic_stop_key)
-        print("mic_start_with_screenshot_key", self.mic_start_with_screenshot_key)
 
-        if self.use_elevenlabs_voice and self.elevenlabs_voice is None:
-            exit("No elevenlabs voice was provided.")
-
-        first_system_message = self.character_info.get("first_system_message", None)
+        # character personality configs
+        self.first_system_message = self.character_info.get(
+            "first_system_message", None
+        )
 
         self.message_replacements = self.character_info.get(
             "message_replacements", None
         )
-        self.supported_prefixes = self.character_info.get("supported_prefixes", None)
 
-        self.max_history_length_messages = self.character_info.get(
+        # chat history configs
+        self.max_history_length_messages = self.character_info.get("history", {}).get(
             "max_history_length_messages", 100
         )
-        self.restore_previous_history = self.character_info.get(
+        self.restore_previous_history = self.character_info.get("history", {}).get(
             "restore_previous_history", False
         )
 
+        # subtitles configs
+        self.show_subtitles = self.character_info.get("subtitles", {}).get(
+            "show_subtitles", False
+        )
+        self.user_text_color = self.character_info.get("subtitles", {}).get(
+            "user_text_color", False
+        )
+        self.character_text_color = self.character_info.get("subtitles", {}).get(
+            "character_text_color", False
+        )
+
+        # character visuals configs
+        self.hide_character_when_idle = self.character_info.get(
+            "hide_character_when_idle", True
+        )
+        self.supported_prefixes = self.character_info.get("supported_prefixes", {})
+        self.image_paths = self.character_info.get("images", {})
+        self.image_azure_voice_style_root_path = self.character_info.get(
+            "image_azure_voice_style_root_path", ""
+        )
+        # all of the default states (supported by both Azure TTS and 11labs)
+        self.images_by_state = {}
+        for state, image_path in self.image_paths.items():
+            self.images_by_state[state] = f"assets/images/{image_path}"
+
+        # if using Azure TTS (not 11labs) then also add the images for each voice style/emotion
+        if not self.use_elevenlabs_voice:
+            for prefix, voice_style in self.supported_prefixes.items():
+                prefix_no_brackets = prefix.replace("(", "").replace(")", "")
+                file_name = f"{prefix_no_brackets}.png"
+                self.images_by_state[voice_style] = (
+                    f"assets/images/{self.image_azure_voice_style_root_path}{file_name}"
+                )
+
+        # 1 for down, -1 for up
+        self.image_offset_y = 0
+        self.movement_direction = 1
+        self.movement_speed = 3
+        self.image_max_offset = 9
+        self.image_min_offset = 0
+
+        # global state
+        self.state = "idle"
+        self.subtitles = None
+        self.voice_style = None
+        self.voice_image = None
+
+    def init_chat_history(self):
+        """Initializes chat history by reading or clearing history.
+
+        If restoring from a previous history file, it will load it. If not, it clears the history and enters the first system message if available.
+        """
+        print("[yellow]\nInit Chat History")
         if self.restore_previous_history and exists(self.chat_history_filepath):
             # read the existing file and use it
             self.openai_manager.chat_history = read_config_file(
@@ -114,9 +175,9 @@ class CommanderGPT:
             with open(self.chat_history_filepath, "w") as file:
                 file.write("")
             # and enter the first system message if provided
-            if first_system_message is not None:
+            if self.first_system_message is not None:
                 first_system_message_stringified = "\n".join(
-                    first_system_message["content"]
+                    self.first_system_message["content"]
                 )
                 system_message_formated = {
                     "role": "system",
@@ -127,62 +188,149 @@ class CommanderGPT:
                 print("first_system_message:", system_message_formated)
                 self.openai_manager.chat_history.append(system_message_formated)
 
-        self.image_idle_path = self.character_info.get("image_idle", None)
-        self.image_talking_path = self.character_info.get("image_talking", None)
-        self.image_listening_path = self.character_info.get("image_listening", None)
-        self.image_thinking_path = self.character_info.get("image_thinking", None)
-        self.image_error_path = self.character_info.get("image_error", None)
+    def init_libs(self):
+        """Initializes the necessary libraries for the app.
 
-        self.image_azure_voice_style_root_path = self.character_info.get(
-            "image_azure_voice_style_root_path", None
+        Sets up the speech-to-text, OpenAI, ElevenLabs, and audio manager libraries with the respective API keys.
+        """
+        print("[yellow]\nInit Libraries")
+        # setup our libraries
+        if self.use_elevenlabs_voice and self.elevenlabs_voice is not None:
+            self.elevenlabs_manager = ElevenLabsManager(
+                elevenlabs_api_key=self.token_config.get("elevenlabs_api_key", None)
+            )
+        # Used for transcribing the mic to text, and optionally for TTS as well if not using 11labs
+        self.speechtotext_manager = SpeechToTextManager(
+            azure_tts_key=self.token_config.get("azure_tts_key", None),
+            azure_tts_region=self.token_config.get("azure_tts_region", None),
         )
-        self.character_pos = (0, SCREEN_HEIGHT)
-        self.subtitles = None
-        self.show_subtitles = self.character_info.get("show_subtitles", True)
-        self.voice_style = None
-        self.voice_image = None
-        self.user_text_color = self.character_info.get(
-            "user_text_color", [255, 255, 255]
+        # Use to communicate with chatGPT through OpenAI
+        self.openai_manager = OpenAiManager(
+            openai_api_key=self.token_config.get("openai_api_key", None)
         )
-        self.character_text_color = self.character_info.get(
-            "character_text_color", [255, 124, 124]
+        self.audio_manager = AudioManager()
+
+    def init_visuals(self, root):
+        """Initializes the main window and canvas for visual display.
+
+        Sets up the root window size, title, and the canvas for drawing. Initializes the font used for text display.
+
+        Args:
+            root (tk.Tk): The root Tkinter window where the app will be displayed.
+        """
+        print("[yellow]\nInit Main Window")
+        self.root = root
+        self.root.title("Test")
+        self.root.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")
+
+        # Create a canvas to draw text with outline
+        self.canvas = tk.Canvas(root, width=1280, height=720)
+        self.canvas.pack()
+
+        self.font = ("Helvetica", 32, "bold")
+
+    def update_visuals(self):
+        """Updates the visuals on the canvas.
+
+        Clears the canvas, updates the character image and the subtitles based on the current state, and applies the necessary offsets for movement.
+        """
+        self.canvas.delete("all")
+        # Show character image
+        if self.state != "idle" or not self.hide_character_when_idle:
+            if self.state == "talking":
+                self.image_offset_y += (
+                    self.movement_direction * self.movement_speed
+                )  # Adjust speed of movement
+
+                # Reverse direction when reaching top or bottom
+                if (
+                    self.image_offset_y >= self.image_max_offset
+                    or self.image_offset_y <= self.image_min_offset
+                ):
+                    self.movement_direction *= -1
+
+                # alternate between idle and the associated talking image
+                # if self.movement_direction > 0:
+                character_image = self.voice_image
+                # else:
+                #    character_image = self.images_by_state.get("idle")
+                self.show_image(character_image, offset_y=self.image_offset_y)
+            else:
+                self.show_image(self.images_by_state.get(self.state), offset_y=0)
+
+        # Show subtitles
+        if self.show_subtitles:
+            self.draw_text_with_outline(text=self.subtitles, outline_thickness=2)
+
+    def draw_text_with_outline(self, text: str, outline_thickness: int = 1):
+        """Draws text on the canvas with an outline effect.
+
+        The text is drawn multiple times with offsets to create the appearance of an outline.
+
+        Args:
+            text (str): The text to be displayed.
+            outline_thickness (int): The thickness of the outline. The higher the value, the thicker the outline. Default is 1.
+        """
+        # Draw outline text offset from where the actual text will be
+        for x_offset in range(-outline_thickness, outline_thickness + 1):
+            for y_offset in range(-outline_thickness, outline_thickness + 1):
+                self.canvas.create_text(
+                    (SCREEN_WIDTH * 0.5) + x_offset + 20,
+                    20 + y_offset,
+                    text=text,
+                    font=self.font,
+                    fill="black",
+                    anchor="n",
+                    width=SCREEN_WIDTH - 40,
+                    justify="center",
+                )
+
+        self.canvas.create_text(
+            20 + SCREEN_WIDTH * 0.5,
+            20,
+            text=text,
+            font=self.font,
+            fill="white",
+            anchor="n",
+            width=SCREEN_WIDTH - 40,
+            justify="center",
         )
-        self.azure_voice_style_images = {}
-        if self.image_idle_path and self.image_talking_path:
-            self.idle_image = pygame.image.load(f"assets/images/{self.image_idle_path}")
-            self.talking_image = pygame.image.load(
-                f"assets/images/{self.image_talking_path}"
-            )
-            self.listening_image = pygame.image.load(
-                f"assets/images/{self.image_listening_path}"
-            )
-            self.thinking_image = pygame.image.load(
-                f"assets/images/{self.image_thinking_path}"
-            )
-            self.error_image = pygame.image.load(
-                f"assets/images/{self.image_error_path}"
-            )
-            if self.image_azure_voice_style_root_path and self.supported_prefixes:
-                for prefix in self.supported_prefixes:
-                    prefix_no_brackets = prefix.replace("(", "").replace(")", "")
-                    file_name = f"{prefix_no_brackets}.png"
-                    voice_style = self.supported_prefixes[prefix]
-                    self.azure_voice_style_images[voice_style] = pygame.image.load(
-                        f"assets/images/{self.image_azure_voice_style_root_path}{file_name}"
-                    )
 
-            pygame.init()
-            pygame.display.set_caption("gpt")
-            self.font = pygame.font.Font("assets/fonts/NotoSerifCJK-Regular.ttc", 42)
-            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-            self.update_screen(None, self.character_pos)
+    def show_image(self, file_path: str, offset_y: int = 0):
+        """Displays an image on the canvas.
 
-        self.state = None
-        if not self.hide_character_when_idle:
-            self.state = "idle"
+        Tries to load the image from the specified file path and display it centered on the canvas.
 
-        self.screen_shot_enabled = False
+        Args:
+            file_path (str): The path to the image file to be displayed.
 
+        Raises:
+            Exception: If the image cannot be loaded, an error message is printed.
+        """
+        if file_path is None:
+            print("[red]\nNo file_path was provided to show_image!")
+            return
+
+        try:
+            self.image = Image.open(file_path)
+            self.photo = ImageTk.PhotoImage(
+                image=self.image, size=(SCREEN_WIDTH, SCREEN_HEIGHT)
+            )
+
+            self.canvas.create_image(
+                SCREEN_WIDTH * 0.5, SCREEN_HEIGHT * 0.5 + offset_y, image=self.photo
+            )
+        except Exception as e:
+            print(f"[red]\nError loading image: {e}")
+
+    def init_ai_connections(self):
+        """Initializes the main thread that will handle the connections to the AI endpoints.
+
+        Starts new threads that will terminate if the main process terminates.
+        The first thread handles user input, sending to the various endpoints, and printing results.
+        The second thread just allows keyboard toggling of screenshots on or off.
+
+        """
         # Create thread to handle the AI stuff, they will terminate if the main process terminates
         thread_chatgpt = threading.Thread(target=self.handle_chatgpt, daemon=True)
         non_blocking_toggles = threading.Thread(
@@ -193,36 +341,8 @@ class CommanderGPT:
         thread_chatgpt.start()
         non_blocking_toggles.start()
 
-    def handle_non_blocking_toggles(self):
-        while True:
-            # Wait until user presses the mic_start_key
-            wait_until_key(key_to_match=self.mic_start_with_screenshot_key)
-            self.screen_shot_enabled = not self.screen_shot_enabled
-            print("Send screenshot with next message? ", self.screen_shot_enabled)
-
-    def update_screen(self, image, pos=(0, 0), voice_image=None):
-        self.screen.fill((0, 255, 0))
-
-        if voice_image:
-            self.screen.blit(voice_image, pos)
-        elif image:
-            self.screen.blit(image, pos)
-
-        if self.subtitles and self.show_subtitles:
-            display_text_with_wrap(
-                screen=self.screen,
-                font=self.font,
-                text=self.subtitles,
-                box_width=SCREEN_WIDTH - 20,
-                xpos=10,
-                ypos=10,
-                color=self.voice_color,
-            )
-
-        pygame.display.update()
-
     def handle_chatgpt(self):
-        # start logic loops
+        """Main logic loop for handling all interactions between the user and AI character."""
         print(f"[green]\nStarting the loop, press num {self.mic_start_key} to begin")
         while True:
             print("[green]\nWaiting")
@@ -242,10 +362,13 @@ class CommanderGPT:
             print("[green]\nDone listening to mic")
             self.state = "thinking"
 
-            # send question to openai
+            # determine if screenshots are enabled, if so what monitor to screenshot
+            # -1 means it will not send one in this case
             monitor_number = -1
             if self.screen_shot_enabled:
                 monitor_number = self.monitor_to_screenshot
+
+            # send question to openai
             openai_result = self.openai_manager.chat_with_history(
                 prompt=mic_result,
                 monitor_to_screenshot=monitor_number,
@@ -303,7 +426,7 @@ class CommanderGPT:
                             voice_image_file_name = prefix.replace("(", "").replace(
                                 ")", ""
                             )
-                            self.voice_image = self.azure_voice_style_images.get(
+                            self.voice_image = self.images_by_state.get(
                                 voice_image_file_name, None
                             )
                             openai_result = openai_result.removeprefix(prefix)
@@ -322,59 +445,35 @@ class CommanderGPT:
                 "[green]\n---\nFinished processing dialogue.\nReady for next input.\n---\n"
             )
 
+    def handle_non_blocking_toggles(self):
+        """Waits for a key to pressed and toggles enabling of sending screenshots."""
+        # only need to do this if we actually have screenshots enabled in configs
+        while True:
+            # Wait until user presses the mic_start_key
+            wait_until_key(key_to_match=self.mic_start_with_screenshot_key)
+            self.screen_shot_enabled = not self.screen_shot_enabled
+            if self.screen_shot_enabled:
+                print("[green]\nScreenshot will be sent with your next message.")
+            else:
+                print("[yelow]\nYour next message will be text-only.")
+
+    def update(self):
+        """Periodically updates the visuals and interactions in the app.
+
+        This method calls the update_visuals method to refresh the display. It runs in a loop to keep updating until the app is closed.
+        """
+        self.update_visuals()
+        # Schedule the next update (every 10ms)
+        self.root.after(10, self.update)
+
 
 if __name__ == "__main__":
-    commander_gpt = CommanderGPT()
-    # main thread will handle visuals and minor events
-    pop_up_speed = 30
-    while True:
-        if commander_gpt.state == "talking":
-            # show talking image
-            if commander_gpt.character_pos[1] >= pop_up_speed:
-                commander_gpt.character_pos = (
-                    commander_gpt.character_pos[0],
-                    commander_gpt.character_pos[1] - pop_up_speed,
-                )
-            else:
-                commander_gpt.character_pos = (0, random.randint(0, 10))
-            if random.randrange(0, 100) < 5:
-                commander_gpt.update_screen(
-                    commander_gpt.talking_image,
-                    commander_gpt.character_pos,
-                    commander_gpt.voice_image,
-                )
-            elif random.randrange(0, 100) < 5:
-                commander_gpt.update_screen(
-                    commander_gpt.idle_image, commander_gpt.character_pos, None
-                )
+    print(sys.argv)
+    # Create the main window (root)
+    root = tk.Tk()
 
-        elif commander_gpt.state == "idle":
-            if commander_gpt.hide_character_when_idle:
-                if commander_gpt.character_pos[1] <= SCREEN_HEIGHT - pop_up_speed:
-                    commander_gpt.character_pos = (
-                        commander_gpt.character_pos[0],
-                        commander_gpt.character_pos[1] + pop_up_speed,
-                    )
-                else:
-                    commander_gpt.character_pos = (0, SCREEN_HEIGHT)
-            else:
-                commander_gpt.character_pos = (0, 0)
-            commander_gpt.update_screen(
-                commander_gpt.idle_image, commander_gpt.character_pos, None
-            )
-        elif commander_gpt.state == "listening":
-            commander_gpt.update_screen(
-                commander_gpt.listening_image, commander_gpt.character_pos, None
-            )
-        elif commander_gpt.state == "thinking":
-            commander_gpt.update_screen(
-                commander_gpt.thinking_image, commander_gpt.character_pos, None
-            )
-        elif commander_gpt.state == "error":
-            commander_gpt.update_screen(
-                commander_gpt.error_image, commander_gpt.character_pos, None
-            )
-        else:
-            # remove character from screen
-            commander_gpt.update_screen(None)
-        time.sleep(0.03)
+    # Initialize the app
+    app = CommanderGPTApp(root=root, args=sys.argv)
+
+    # Run the application
+    root.mainloop()
