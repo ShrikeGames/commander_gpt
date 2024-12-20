@@ -5,6 +5,65 @@
         "elevenlabs_voice": "Alice",
         "azure_voice_name": "en-US-SerenaMultilingualNeural",
         "openai_model_name": "gpt-4o",
+        "input_voice_start_button": "Key.home",
+        "input_voice_end_button": "Key.end",
+        "input_voice_start_button_with_screenshot": "Key.shift",
+        "screen_shot_enabled": false,
+        "monitor_to_screenshot": 3,
+        "history": {
+            "max_history_length_messages": 100,
+            "restore_previous_history": true
+        },
+        "supported_prefixes": {
+            "(happy)": "friendly",
+            "(empathetic)": "empathetic",
+            "(excited)" : "excited",
+            "(friendly)" : "friendly",
+            "(relieved)" : "relieved",
+            "(worried)" : "worried",
+            "(pensive)" : "worried",
+            "(sad)" : "sad",
+            "(smug)" : "serious",
+            "(serious)" : "serious",
+            "(shy)" : "shy"
+        },
+        "unsupported_prefixes": {
+            "(angry)" : "angry",
+            "(cheerful)" : "cheerful",
+            "(friendly)": "friendly",
+            "(hopeful)" : "hopeful",
+            "(shouting)" : "shouting",
+            "(shout)" : "shouting",
+            "(terrified)" : "terrified",
+            "(unfriendly)" : "unfriendly",
+            "(whispering)" : "whispering",
+            "(whisper)" : "whispering"
+        },
+        "images": {
+            "idle": "noir/idle.png",
+            "talking": "noir/talking.png",
+            "listening": "noir/listening.png",
+            "thinking": "noir/thinking.png",
+            "error": "noir/error.png"
+        },
+        "image_azure_voice_style_root_path": "noir/",
+        "hide_character_when_idle": false,
+        "subtitles": {
+            "show_subtitles": true,
+            "user_text_color": "white",
+            "character_text_color": "pink",
+            "text_outline_color": "black",
+            "text_outline_width": 2,
+            "font_size": 32
+        },
+        "background_colour": "#00FF00",
+        "message_replacements": [
+            {
+                "to_replace": "XCOM",
+                "replace_with": "X-COM",
+                "reason": "To help TTS pronounce it correctly."
+            }
+        ],
         "first_system_message": {
             "role": "system",
             "content": ["You are NoiR, a Japanese Composer, Singer, and Pianist but now they simply call you \"Commander\" or \"The Commander\".",
@@ -46,66 +105,7 @@
             "(serious) When you want to be serious",
             "(shy) When you are quiet or shy",
             "Good luck, Commander."]
-        },
-        "supported_prefixes": {
-            "(happy)": "friendly",
-            "(empathetic)": "empathetic",
-            "(excited)" : "excited",
-            "(friendly)" : "friendly",
-            "(relieved)" : "relieved",
-            "(worried)" : "worried",
-            "(pensive)" : "worried",
-            "(sad)" : "sad",
-            "(smug)" : "serious",
-            "(serious)" : "serious",
-            "(shy)" : "shy"
-        },
-        "unsupported_prefixes": {
-            "(angry)" : "angry",
-            "(cheerful)" : "cheerful",
-            "(friendly)": "friendly",
-            "(hopeful)" : "hopeful",
-            "(shouting)" : "shouting",
-            "(shout)" : "shouting",
-            "(terrified)" : "terrified",
-            "(unfriendly)" : "unfriendly",
-            "(whispering)" : "whispering",
-            "(whisper)" : "whispering"
-        },
-        "message_replacements": [
-            {
-                "to_replace": "XCOM",
-                "replace_with": "X-COM",
-                "reason": "To help TTS pronounce it correctly."
-            }
-        ],
-        "input_voice_start_button": "Key.home",
-        "input_voice_end_button": "Key.end",
-        "input_voice_start_button_with_screenshot": "Key.shift",
-        "screen_shot_enabled": false,
-        "monitor_to_screenshot": 3,
-        "images": {
-            "idle": "noir/idle.png",
-            "talking": "noir/talking.png",
-            "listening": "noir/listening.png",
-            "thinking": "noir/thinking.png",
-            "error": "noir/error.png"
-        },
-        "image_azure_voice_style_root_path": "noir/",
-        "history": {
-            "max_history_length_messages": 100,
-            "restore_previous_history": true
-        },
-        "hide_character_when_idle": false,
-        "subtitles": {
-            "show_subtitles": true,
-            "user_text_color": "white",
-            "character_text_color": "pink",
-            "text_outline_color": "black",
-            "text_outline_width": 2,
-            "font_size": 32
-        },
-        "background_colour": "#00FF00"
+        }
         
     }
 

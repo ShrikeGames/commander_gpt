@@ -446,8 +446,6 @@ class CommanderGPTApp:
                             voice_image_file_name = prefix.replace("(", "").replace(
                                 ")", ""
                             )
-                            print(self.images_by_state)
-                            print(voice_image_file_name)
                             self.voice_image = self.images_by_state.get(
                                 voice_image_file_name, self.images_by_state.get("error")
                             )
