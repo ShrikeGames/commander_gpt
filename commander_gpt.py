@@ -21,12 +21,14 @@ SCREEN_HEIGHT = 720
 
 class CommanderGPTApp:
     def __init__(self, root, args):
-        """Initializes the app with a canvas, a background image, and subtitle text.
+        """Initializes the app.
 
-        Sets up the main window, initializes the canvas, loads an image, and draws text with an outline.
+        Loads configs, sets up the libraries, loads or creates the chat history, creates the visuals, and prepares to connect to the endpoints.
+        Starts the main update loop.
 
         Args:
             root (tk.Tk): The root Tkinter window.
+            args (list[str]): The command line arguments. Expected [filename, character_name].
         """
         self.init_configs(args)
         self.init_libs()
