@@ -1,55 +1,64 @@
 import json
 import base64
-import pygame
 from mss import mss
 from pynput import keyboard
 from pynput.keyboard import KeyCode
-from pygame import Rect
 
-def read_config_file(filepath:str) -> str:
+
+def read_config_file(filepath: str) -> str:
     json_result = None
-    
+
     with open(filepath) as f:
         json_result = json.load(f)
 
     return json_result
 
 
-def write_json_file(filepath:str, data:dict) -> str:
+def write_json_file(filepath: str, data: dict) -> str:
     with open(filepath, "w") as file:
         file.write(str(json.dumps(data)))
-    
 
-def button_released(key:KeyCode, to_match_key:str="7"):
+
+def button_released(key: KeyCode, to_match_key: str = "7"):
     if to_match_key is None:
         return
     # For some ungodly reason pynput does not give us any reasonable access to the character or vk or anything
     # no the answers online aren't true (at least not on the latest)
     # Hacky workaround, force to strings and replace any quotes (sometimes it adds single quotes or double quote or none at all)
     # still doesn't really support numpad numbers (they show up as just regular numbers)
-    key_string = f"{KeyCode.from_char(key)}".replace("'","").replace("\"","")
-    #print(key_string)
-    to_match_key_string = f"{KeyCode.from_char(to_match_key)}".replace("'","").replace("\"","")
+    key_string = f"{KeyCode.from_char(key)}".replace("'", "").replace('"', "")
+    # print(key_string)
+    to_match_key_string = f"{KeyCode.from_char(to_match_key)}".replace("'", "").replace(
+        '"', ""
+    )
     if key_string == to_match_key_string:
         return False
     return True
 
-def wait_until_key(key_to_match:str = "7"):
-    with keyboard.Listener(on_release=lambda key: button_released(key=key, to_match_key=key_to_match)) as listener:
+
+def wait_until_key(key_to_match: str = "7"):
+    with keyboard.Listener(
+        on_release=lambda key: button_released(key=key, to_match_key=key_to_match)
+    ) as listener:
         listener.join()
 
-def screenshot_encode_monitor(monitor:int=1):
+
+def screenshot_encode_monitor(monitor: int = 1):
     with mss() as sct:
-        filename = sct.shot(mon=monitor, output=f"assets/images/screenshots/monitor_{monitor}.png")
+        filename = sct.shot(
+            mon=monitor, output=f"assets/images/screenshots/monitor_{monitor}.png"
+        )
         print(filename)
 
-    with open(filename, 'rb') as f:
+    with open(filename, "rb") as f:
         data = f.read()
     base64_image = base64.b64encode(data).decode("utf-8")
     return base64_image
 
 
-def display_text_with_wrap(screen, font, text, box_width, xpos, ypos, color, outline_color=(0,0,0)):
+def display_text_with_wrap(
+    screen, font, text, box_width, xpos, ypos, color, outline_color=(0, 0, 0)
+):
     # Create an empty list to store the wrapped lines
     wrapped_lines = []
 
