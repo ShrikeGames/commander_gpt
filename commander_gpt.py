@@ -220,7 +220,7 @@ class CommanderGPTApp:
         """
         print("[yellow]\nInit Main Window")
         self.root = root
-        self.root.title("Test")
+        self.root.title("GPT")
         self.root.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")
 
         # Create a canvas to draw text with outline
