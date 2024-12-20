@@ -15,6 +15,7 @@ Key differences:
 - Cleaner code that only has what you need.
 - Documentation ;P
 - Allows toggling features on or off, including using Azure TTS instead of 11labs.
+- Easier multi-lingual support (EG: English and Japanese at the same time).
 
 ## Video Example
 You can check out this AI (as of 2024-12-19, now outdated) making all of the decisions in XCOM Enemy Unknown here:
