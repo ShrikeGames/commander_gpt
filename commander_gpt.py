@@ -123,11 +123,20 @@ class CommanderGPTApp:
         self.character_text_color = self.character_info.get("subtitles", {}).get(
             "character_text_color", False
         )
+        self.text_outline_color = self.character_info.get("subtitles", {}).get(
+            "text_outline_color", False
+        )
+        self.text_outline_width = self.character_info.get("subtitles", {}).get(
+            "text_outline_width", 2
+        )
+        self.font_size = self.character_info.get("subtitles", {}).get("font_size", 32)
 
         # character visuals configs
         self.hide_character_when_idle = self.character_info.get(
             "hide_character_when_idle", True
         )
+        self.background_colour = self.character_info.get("background_colour", "#00FF00")
+
         self.supported_prefixes = self.character_info.get("supported_prefixes", {})
         self.image_paths = self.character_info.get("images", {})
         self.image_azure_voice_style_root_path = self.character_info.get(
@@ -143,10 +152,9 @@ class CommanderGPTApp:
             for prefix, voice_style in self.supported_prefixes.items():
                 prefix_no_brackets = prefix.replace("(", "").replace(")", "")
                 file_name = f"{prefix_no_brackets}.png"
-                self.images_by_state[voice_style] = (
+                self.images_by_state[prefix_no_brackets] = (
                     f"assets/images/{self.image_azure_voice_style_root_path}{file_name}"
                 )
-
         # 1 for down, -1 for up
         self.image_offset_y = 0
         self.movement_direction = 1
@@ -176,7 +184,7 @@ class CommanderGPTApp:
                 return
         except Exception as e:
             print(f"[red]\nFailed to read chat history, will create a new one. {e}")
-    
+
         # otherwise wipe it if it exists
         with open(self.chat_history_filepath, "w") as file:
             file.write("")
@@ -187,9 +195,7 @@ class CommanderGPTApp:
             )
             system_message_formated = {
                 "role": "system",
-                "content": [
-                    {"type": "text", "text": first_system_message_stringified}
-                ],
+                "content": [{"type": "text", "text": first_system_message_stringified}],
             }
             print("first_system_message:", system_message_formated)
             self.openai_manager.chat_history.append(system_message_formated)
@@ -230,11 +236,15 @@ class CommanderGPTApp:
         self.root.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")
 
         # Create a canvas to draw text with outline
-        self.canvas = tk.Canvas(root, width=1280, height=720)
+        self.canvas = tk.Canvas(
+            root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT, bg=self.background_colour
+        )
         self.canvas.pack()
 
         self.font = tkFont.Font(
-            family="assets/fonts/NotoSerifCJK-Regular.ttc", size=32, weight="bold"
+            family="assets/fonts/NotoSerifCJK-Regular.ttc",
+            size=self.font_size,
+            weight="bold",
         )
 
     def update_visuals(self):
@@ -268,26 +278,27 @@ class CommanderGPTApp:
 
         # Show subtitles
         if self.show_subtitles:
-            self.draw_text_with_outline(text=self.subtitles, outline_thickness=2)
+            self.draw_text_with_outline(text=self.subtitles)
 
-    def draw_text_with_outline(self, text: str, outline_thickness: int = 1):
+    def draw_text_with_outline(self, text: str):
         """Draws text on the canvas with an outline effect.
 
         The text is drawn multiple times with offsets to create the appearance of an outline.
 
         Args:
             text (str): The text to be displayed.
-            outline_thickness (int): The thickness of the outline. The higher the value, the thicker the outline. Default is 1.
         """
         # Draw outline text offset from where the actual text will be
-        for x_offset in range(-outline_thickness, outline_thickness + 1):
-            for y_offset in range(-outline_thickness, outline_thickness + 1):
+        for x_offset in range(-self.text_outline_width, self.text_outline_width + 1):
+            for y_offset in range(
+                -self.text_outline_width, self.text_outline_width + 1
+            ):
                 self.canvas.create_text(
                     (SCREEN_WIDTH * 0.5) + x_offset + 20,
                     20 + y_offset,
                     text=text,
                     font=self.font,
-                    fill="black",
+                    fill=self.text_outline_color,
                     anchor="n",
                     width=SCREEN_WIDTH - 40,
                     justify="center",
@@ -317,7 +328,7 @@ class CommanderGPTApp:
         """
         if file_path is None:
             print("[red]\nNo file_path was provided to show_image!")
-            return
+            file_path = self.images_by_state.get("error", None)
 
         try:
             self.image = Image.open(file_path)
@@ -431,11 +442,14 @@ class CommanderGPTApp:
                     for prefix in self.supported_prefixes:
                         if openai_result.startswith(prefix):
                             self.voice_style = self.supported_prefixes.get(prefix, None)
+
                             voice_image_file_name = prefix.replace("(", "").replace(
                                 ")", ""
                             )
+                            print(self.images_by_state)
+                            print(voice_image_file_name)
                             self.voice_image = self.images_by_state.get(
-                                voice_image_file_name, None
+                                voice_image_file_name, self.images_by_state.get("error")
                             )
                             openai_result = openai_result.removeprefix(prefix)
                 self.speechtotext_manager.texttospeech_from_text(

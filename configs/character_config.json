@@ -100,8 +100,12 @@
         "subtitles": {
             "show_subtitles": true,
             "user_text_color": "white",
-            "character_text_color": "pink"
-        }
+            "character_text_color": "pink",
+            "text_outline_color": "black",
+            "text_outline_width": 2,
+            "font_size": 32
+        },
+        "background_colour": "#00FF00"
         
     }
 
