@@ -39,7 +39,7 @@ class CommanderGPT:
         # retrieve character config based on character name
         self.character_info = self.character_config.get(self.character_config_key, None)
         if self.character_info is None:
-            exit("The provided character name was not defind in character_config.json")
+            exit("The provided character name was not defined in character_config.json")
 
         self.chat_history_filepath = (
             f"chat_history/{self.character_config_key}_history.json"
