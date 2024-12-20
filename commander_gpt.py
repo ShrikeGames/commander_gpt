@@ -220,7 +220,8 @@ class CommanderGPT:
                     for prefix in self.supported_prefixes:
                         if openai_result.startswith(prefix):
                             self.voice_style = self.supported_prefixes.get(prefix, None)
-                            self.voice_image = self.azure_voice_style_images.get(self.voice_style, None)
+                            voice_image_file_name = prefix.replace("(", "").replace(")", "")
+                            self.voice_image = self.azure_voice_style_images.get(voice_image_file_name, None)
                             openai_result = openai_result.removeprefix(prefix)
                 self.speechtotext_manager.texttospeech_from_text(azure_voice_name=self.azure_voice_name, azure_voice_style=self.voice_style, text_to_speak=openai_result)
             
