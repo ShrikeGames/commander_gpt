@@ -27,13 +27,109 @@ Create a token_config.json in the configs folder with the following format
 }
 ```
 2. Update character_config.json with specifics to your character.
-- TODO: Document all parts of it.
-- You can switch between using 11lab voices or not (if not then it will use azure TTS instead)
-- 11labs is more expensive, and azure gives you plenty of monthly credits to effectively be free.
-- Azure TTS also supports changing the voice style (shouting, sad, excited, etc) depending on the voice selected.
-- https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support
+### character_config.json Structure
+You can add as many characters as you want to this file.
+This allows you to run the application for different character configurations as easily as passing in the name of the character as the first command line argument
+```json
+{
+    "first_character": {
+        ...
+    },
+    "second_character": {
+        ...
+    }
+}
+```
+EG: `python3 commander_gpt first_character` or `python3 commander_gpt second_character`
+For each character you can configure things to its specific needs.
+`name`: The name of the character, used to record and load the chat history.
+`use_elevenlabs_voice`: true/false - if true the app will use 11labs for TTS, if false will use azure TTS
+`elevenlabs_voice`: If using 11labs it will use this voice, must be one available to you in 11labs.
+`azure_voice_name`: If using azure TTS this is the name of the voice it will use, it must be one available to you. Check the microsoft docs for options: https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support
+`speech_recognition_language`: Used for azure TTS, should match the language of the azure_voice_name you are using.
+`openai_model_name`: What OpenAI model to use, EG: gpt-4o.
+`input_voice_start_button`: The key defined to start the microphone recording of your prompt. Must be a pynput KeyCode. For special keys this is like `Key.home` but for regular keys it will just be `a` or `1`. Does not recgonize numpad keys.
+`input_voice_end_button`: The key defined to stop recording the microphone and to trigger sending the result to OpenAI. Same limitations as above.
+`input_voice_start_button_with_screenshot`: The key defined to toggle sending a screenshot alongside your recorded prompt from the microphone. Same limitations as above.
+`screen_shot_enabled`: When starting the app up it will default to having screenshots being enabled if true, or disabled if false. Relates to above.
+`monitor_to_screenshot`: When sending a screenshot this is the monitor id (EG: 1) to take the screenshot from. Everything on that monitor will be included.
+`history`: A dictionary of keys containing configurations for the chat history.
+EG:
+```json
+"history": {
+    "max_history_length_messages": 100,
+    "restore_previous_history": true
+}
+```
+`max_history_length_messages`: The total number of prompts OpenAI will remember in its history, when this limit is passed then older prompts will be deleted. The system prompt will always be kept so that your character remembers its personality and limitations.
+`restore_previous_history`: If true, the app will (on start up) check if you have a chat history and if so load it so you can continue where you left off. If false, will start a brand new chat history, removing any prior logs for this character.
+`supported_prefixes`: A dictionary containing Azure TTS Voice Styles that the selected azure_voice_name supports.
+It is in the format of:
+```json
+"supported_prefixes": {
+    "(friendly)": "friendly",
+    "(relieved)": "relieved",
+    ...
+}
+```
+You can map any prefix to any Voice Style that the azure_voice_name supports. This allows the AI to express more emotions than the azure_voice_name actually has and just map them to the smaller limited amount.
+EG if you wanted the AI to have the same voice for (friendly) and (happy) or (shout), (shouting) and (yell) you could do this:
+```json
+"supported_prefixes": {
+    "(friendly)": "friendly",
+    "(happy)": "friendly",
+    "(shouting)": "shouting",
+    "(shout)": "shouting",
+    "(yell)": "shouting",
+}
+```
+`unsupported_prefixes`: The same but is completely unused, and lets you keep a history of possible prefixes and mappings to easily copy paste in the future.
+`images`: A dictionary mapping character state to relates images of them in that state.
+It must contain "idle", "talking", "listening", "thinking", and "error" states. They are used regardless of if using 11labs or Azure TTS.
+Images should all be the same size for best results, most likely to match the the size of the app (default 1280x720).
+EG:
+```json
+"images": {
+    "idle": "noir/idle.png",
+    "talking": "noir/talking.png",
+    "listening": "noir/listening.png",
+    "thinking": "noir/thinking.png",
+    "error": "noir/error.png"
+},
+```
+`image_azure_voice_style_root_path`: The root path to where your character will have any additional images (can be the same as above). It is relative to the `/assets/images` folder.
+This folder must include an image for every entry in `supported_prefixes` defined above. The filenames must be without the brackets, and be .png.
+EG:
+```json
+"image_azure_voice_style_root_path": "noir/"
+```
+`subtitles`: A dictionary of configuration options for customizing the subtitles of you and the character if you want them to show on screen.
+EG:
+```json
+"subtitles": {
+    "show_subtitles": true,
+    "user_text_color": "white",
+    "character_text_color": "pink",
+    "text_outline_color": "black",
+    "text_outline_width": 2,
+    "font_size": 32
+},
+```
+`show_subtitles`: If true then subtitles will show when you are recording a prompt from your mic, or when the character is responding. IF false, subtitles will not be displayed.
+`user_text_color`: The text colour of your subtitles. Can be a named colour such as "white" or a hexcode of the format "#FFFFFF".
+`character_text_color`: The text colour of the character's subtitles. Can be a named colour such as "white" or a hexcode of the format "#FFFFFF".
+`text_outline_color`: The colour outline drawn around the subtitles. Can be a named colour such as "black" or a hexcode of the format "#000000".
+`text_outline_width`: The width/strength of the outline around the subtitle's text.
+`font_size`: The size of the subtitles.
+More configurations for subtitles may be added in the future, or by request.
+`background_colour`: The background colour of the app, this allows you to chroma-key remove the background to have just the character and subtitles show up in OBS or other recording/video software. Can be a named colour such as "green" or a hexcode of the format "#00FF00".
+`first_system_message`: A dictionary containing the `role` which should always be "system", and `content` which is a list of strings.
+You can add as much or as little as you want to the `content` prompt, and the list is only for the sake of easier formatting, they are concatenated together with `\n` characters before being sent to OpenAI.
+It is suggested you provide the AI descriptions of who they are, what their goal is, any particular behaviour you want them to have, and any initial information they should always have available to them.
+You can also give it information about the available azure voice styles you have mapped.
 
 3. Add your character's images to assets/images
+It must have one image for each possible state of the character, and mapped voice style. See above documentation on the character_config.json for details.
 4. Start the program by running
 ```
 .venv/bin/python3 commander_gpt.py your_characters_defined_name
@@ -50,7 +146,7 @@ For example:
 10. when a response from OpenAI is returned it will process it and send it to either 11labs or azure to convert to audio
 11. It will now play the audio of the character talking and show the image of the character.
 12. When the character is done talking you can return to step 5 and repeat to continue the conversation.
-
+14. When satisfied with the results you can capture the app's window in OBS or other software and add a chroma-key filter to remove the background.
 
 ## Troubleshooting
 DO NOT RUN AS SUDO IF ON LINUX.
