@@ -217,6 +217,9 @@ class CommanderGPTApp:
         self.speechtotext_manager = SpeechToTextManager(
             azure_tts_key=self.token_config.get("azure_tts_key", None),
             azure_tts_region=self.token_config.get("azure_tts_region", None),
+            speech_recognition_language=self.token_config.get(
+                "speech_recognition_language", "en-US"
+            ),
         )
         # Use to communicate with chatGPT through OpenAI
         self.openai_manager = OpenAiManager(
@@ -397,7 +400,9 @@ class CommanderGPTApp:
             )
             self.subtitles = None
             if openai_result is None:
-                print("[red]\nThe AI had nothing to say or something went wrong.")
+                print(
+                    "[red]\nThe AI had nothing to say or something went wrong, if you simply pressed the key too early press it again."
+                )
                 self.state = "error"
                 continue
 
