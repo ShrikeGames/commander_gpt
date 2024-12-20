@@ -4,12 +4,14 @@ import sys
 import pygame
 import random
 from pygame import Rect
-from lib.utils import read_config_file, wait_until_key, display_text_with_wrap
+from lib.utils import read_config_file, wait_until_key, display_text_with_wrap, write_json_file
 from lib.azure_speech_to_text import SpeechToTextManager
 from lib.openai_chat import OpenAiManager
 from lib.eleven_labs import ElevenLabsManager
 from lib.audio_player import AudioManager
 from rich import print
+from os.path import exists
+
 # height of the window showing the character
 SCREEN_HEIGHT = 720
 SCREEN_WIDTH = 1280
@@ -34,7 +36,7 @@ class CommanderGPT:
         if self.character_info is None:
             exit("The provided character name was not defind in character_config.json")
 
-        self.chat_history_filepath = f"chat_history/{self.character_config_key}_history.txt"
+        self.chat_history_filepath = f"chat_history/{self.character_config_key}_history.json"
         self.use_elevenlabs_voice = self.character_info.get("use_elevenlabs_voice", True)
         self.elevenlabs_voice = self.character_info.get("elevenlabs_voice", None)
         self.azure_voice_name = self.character_info.get("azure_voice_name", "en-US-AvaMultilingualNeural")
@@ -62,19 +64,26 @@ class CommanderGPT:
             exit("No elevenlabs voice was provided.")
         
         first_system_message = self.character_info.get("first_system_message", None)
-        if first_system_message is not None:
-            first_system_message_stringified= "\n".join(first_system_message["content"])
-            system_message_formated = {"role": "system", "content": [{"type": "text", "text": first_system_message_stringified}]}
-            print("first_system_message:", system_message_formated)
-            self.openai_manager.chat_history.append(system_message_formated)
-
+        
         self.message_replacements = self.character_info.get("message_replacements", None)
         self.supported_prefixes = self.character_info.get("supported_prefixes", None)
         
         self.max_history_length_messages = self.character_info.get("max_history_length_messages", 100)
+        self.restore_previous_history = self.character_info.get("restore_previous_history", False)
 
-        with open(self.chat_history_filepath, "w") as file:
-            file.write("")
+        if self.restore_previous_history and exists(self.chat_history_filepath):
+            # read the existing file and use it
+            self.openai_manager.chat_history = read_config_file(self.chat_history_filepath)
+        else:
+            #otherwise wipe it if it exists
+            with open(self.chat_history_filepath, "w") as file:
+                file.write("")
+            # and enter the first system message if provided
+            if first_system_message is not None:
+                first_system_message_stringified = "\n".join(first_system_message["content"])
+                system_message_formated = {"role": "system", "content": [{"type": "text", "text": first_system_message_stringified}]}
+                print("first_system_message:", system_message_formated)
+                self.openai_manager.chat_history.append(system_message_formated)
 
         self.image_idle_path = self.character_info.get("image_idle", None)
         self.image_talking_path = self.character_info.get("image_talking", None)
@@ -188,8 +197,7 @@ class CommanderGPT:
             
             
             # write the results to chat_history as a backup
-            with open(self.chat_history_filepath, "w") as file:
-                file.write(str(self.openai_manager.chat_history))
+            write_json_file(self.chat_history_filepath, self.openai_manager.chat_history)
             
             # submit to 11labs to get audio
             if self.use_elevenlabs_voice:
@@ -217,6 +225,9 @@ class CommanderGPT:
                 self.speechtotext_manager.texttospeech_from_text(azure_voice_name=self.azure_voice_name, azure_voice_style=self.voice_style, text_to_speak=openai_result)
             
             self.state="idle"
+            # if we hide the character then also hide the subtitles when they're done
+            if self.hide_character_when_idle:
+                self.subtitles = None
 
             print("[green]\n---\nFinished processing dialogue.\nReady for next input.\n---\n")
             

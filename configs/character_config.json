@@ -90,10 +90,11 @@
         "image_error": "noir/error.png",
         "image_azure_voice_style_root_path": "noir/",
         "max_history_length_messages": 60,
-        "hide_character_when_idle": false,
+        "hide_character_when_idle": true,
         "show_subtitles": true,
         "user_text_color": [255,255,255],
-        "character_text_color": [255,166,255]
+        "character_text_color": [255,166,255],
+        "restore_previous_history": true
     }
 
 }
