@@ -7,6 +7,7 @@ Based on DougDoug's https://github.com/DougDougGithub/Babagaboosh/tree/main
 
 Key differences:
 - No OBS Websockets at all, instead it is an application that opens up a window for you to capture and use a chroma-key on.
+![Screenshot_2024-12-20_12-22-01](https://github.com/user-attachments/assets/39cf0e20-cb5e-4cec-a440-a4393b9333f1)
 - Does not use the "keyboards" library to avoid needing to run as sudo/root on linux.
 - Instead of modifying the code for every use-case, it is instead driven by only 2 configuration files (you can still modify the code however you like).
 - Easy swapping between characters without making changes.
