@@ -26,6 +26,45 @@ Create a token_config.json in the configs folder with the following format
     "openai_api_key": "YOUR KEY HERE"
 }
 ```
+- You will have to register for accounts on these services.
+- They also require you to have payment information included.
+- ElevenLabs is optional, only if you want more personalized and better sounding voices.
+
+## Azure
+- Create an account and login to https://portal.azure.com
+- Azure will give you free credits to start, and although you need payment information will not bill you anything until you have used up those credits.
+- The free credits are at least $200 USD as of writing this. You can upgrade your account to a pay-as-you-go within the first month.
+- It is generally going to be very cheap, or completely free as you won't surpass the free credits easily.
+- Additionally you can see how much completely free (no matter what usage) you get from them here: https://azure.microsoft.com/en-ca/pricing/details/cognitive-services/speech-services/
+- Create a Resource Group
+- Create a "Speech service" inside of your new Resource Group
+- Your `azure_tts_key` and `azure_tts_region` are found under "Resource Management" > "Keys and Endpoint"
+
+
+## OpenAI
+- Create an account and login to https://platform.openai.com
+- Click on the "Settings" cog in the top right
+- In the left navigation click on PROJECT > API keys
+- Click "Create new secret key" in the top right
+- Copy the created key and that is your `openai_api_key`
+- To use some models such as `gpt-4o`, you will need to have at least $5 billed to your account.
+- For pricing you can view this page: https://openai.com/api/pricing/
+- Note: Sending images (such as screenshots which is a feature of this app) costs although not very much even for a 1080p picture.
+- Note: Some models such as `gpt-4o-mini` are extremely cheap in comparison to the full `gpt-4o` if you are on a tighter budget.
+  - `$1.25 / 1M input tokens` for `gpt-4o` vs `$0.075 / 1M input tokens` for `gpt-4o-mini`
+
+## ElevenLabs
+- Optional, if you just want to use the Azure TTS you can skip this.
+- Note: I have done very limited testing with 11Labs
+- Create an account and login to https://elevenlabs.io/app/home
+- You get 10,000 free tokens
+- Depending on the plan you pay for you will get access to better voices, and the ability to create your own custom voices from audio samples.
+- For pricing see https://elevenlabs.io/app/subscription
+  - It is generally going to be more expensive than Azure, but with noticably better quality TTS.
+  - You will likely burn through 30,000 credits of the $5/month tier pretty quickly.
+  - The next tier up is $22/month (but first month is half price). It gets you 100,000 credits per month which will likely be enough for casual but consistent use.
+- Note: I am currently not paying for any of the tiers, I am quite happy with the Azure TTS for my use cases right now.
+
 2. Update character_config.json with specifics to your character.
 ### character_config.json Structure
 - You can add as many characters as you want to this file.

@@ -5,7 +5,7 @@
         "elevenlabs_voice": "Alice",
         "azure_voice_name": "en-US-SerenaMultilingualNeural",
         "speech_recognition_language": "en-US",
-        "openai_model_name": "gpt-4o",
+        "openai_model_name": "gpt-4o-mini",
         "input_voice_start_button": "Key.home",
         "input_voice_end_button": "Key.end",
         "input_voice_start_button_with_screenshot": "Key.shift",
