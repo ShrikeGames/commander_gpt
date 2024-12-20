@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.font as tkFont
 from PIL import Image, ImageTk
 import threading
 import sys
@@ -227,7 +228,9 @@ class CommanderGPTApp:
         self.canvas = tk.Canvas(root, width=1280, height=720)
         self.canvas.pack()
 
-        self.font = ("Helvetica", 32, "bold")
+        self.font = tkFont.Font(
+            family="assets/fonts/NotoSerifCJK-Regular.ttc", size=32, weight="bold"
+        )
 
     def update_visuals(self):
         """Updates the visuals on the canvas.
