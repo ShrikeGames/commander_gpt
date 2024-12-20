@@ -3,8 +3,12 @@ import threading
 import sys
 import pygame
 import random
-from pygame import Rect
-from lib.utils import read_config_file, wait_until_key, display_text_with_wrap, write_json_file
+from lib.utils import (
+    read_config_file,
+    wait_until_key,
+    display_text_with_wrap,
+    write_json_file,
+)
 from lib.azure_speech_to_text import SpeechToTextManager
 from lib.openai_chat import OpenAiManager
 from lib.eleven_labs import ElevenLabsManager
@@ -16,18 +20,19 @@ from os.path import exists
 SCREEN_HEIGHT = 720
 SCREEN_WIDTH = 1280
 
-class CommanderGPT:
-    
 
+class CommanderGPT:
     def __init__(self):
         # read token_config file
         self.token_config = read_config_file("configs/token_config.json")
-        
+
         # read character_config file
         self.character_config = read_config_file("configs/character_config.json")
         if len(sys.argv) < 2:
-            exit("You must provide a character defined in character_config.json. EG: commander_gpt.py commander")
-        
+            exit(
+                "You must provide a character defined in character_config.json. EG: commander_gpt.py commander"
+            )
+
         # get character based on name from command line args
         self.character_config_key = sys.argv[1]
 
@@ -36,53 +41,89 @@ class CommanderGPT:
         if self.character_info is None:
             exit("The provided character name was not defind in character_config.json")
 
-        self.chat_history_filepath = f"chat_history/{self.character_config_key}_history.json"
-        self.use_elevenlabs_voice = self.character_info.get("use_elevenlabs_voice", True)
+        self.chat_history_filepath = (
+            f"chat_history/{self.character_config_key}_history.json"
+        )
+        self.use_elevenlabs_voice = self.character_info.get(
+            "use_elevenlabs_voice", True
+        )
         self.elevenlabs_voice = self.character_info.get("elevenlabs_voice", None)
-        self.azure_voice_name = self.character_info.get("azure_voice_name", "en-US-AvaMultilingualNeural")
+        self.azure_voice_name = self.character_info.get(
+            "azure_voice_name", "en-US-AvaMultilingualNeural"
+        )
         self.openai_model_name = self.character_info.get("openai_model_name", "gpt-4o")
 
-        self.hide_character_when_idle = self.character_info.get("hide_character_when_idle", True)
+        self.hide_character_when_idle = self.character_info.get(
+            "hide_character_when_idle", True
+        )
 
         # setup our libraries
         if self.use_elevenlabs_voice and self.elevenlabs_voice is not None:
-            self.elevenlabs_manager = ElevenLabsManager(elevenlabs_api_key=self.token_config.get("elevenlabs_api_key", None))
-        
-        self.speechtotext_manager = SpeechToTextManager(azure_tts_key=self.token_config.get("azure_tts_key", None), azure_tts_region=self.token_config.get("azure_tts_region", None))
-        self.openai_manager = OpenAiManager(openai_api_key=self.token_config.get("openai_api_key", None))
+            self.elevenlabs_manager = ElevenLabsManager(
+                elevenlabs_api_key=self.token_config.get("elevenlabs_api_key", None)
+            )
+
+        self.speechtotext_manager = SpeechToTextManager(
+            azure_tts_key=self.token_config.get("azure_tts_key", None),
+            azure_tts_region=self.token_config.get("azure_tts_region", None),
+        )
+        self.openai_manager = OpenAiManager(
+            openai_api_key=self.token_config.get("openai_api_key", None)
+        )
         self.audio_manager = AudioManager()
 
         # determine what keys we'll listen for to start and stop mic recording
-        self.mic_start_key = self.character_info.get("input_voice_start_button", "Key.home")
+        self.mic_start_key = self.character_info.get(
+            "input_voice_start_button", "Key.home"
+        )
         self.mic_stop_key = self.character_info.get("input_voice_end_button", "Key.end")
-        self.mic_start_with_screenshot_key = self.character_info.get("input_voice_start_button_with_screenshot", "Key.f4")
-        self.monitor_to_screenshot = self.character_info.get("monitor_to_screenshot", -1)
+        self.mic_start_with_screenshot_key = self.character_info.get(
+            "input_voice_start_button_with_screenshot", "Key.f4"
+        )
+        self.monitor_to_screenshot = self.character_info.get(
+            "monitor_to_screenshot", -1
+        )
         print("mic_start_key", self.mic_start_key)
         print("mic_stop_key", self.mic_stop_key)
         print("mic_start_with_screenshot_key", self.mic_start_with_screenshot_key)
-        
+
         if self.use_elevenlabs_voice and self.elevenlabs_voice is None:
             exit("No elevenlabs voice was provided.")
-        
+
         first_system_message = self.character_info.get("first_system_message", None)
-        
-        self.message_replacements = self.character_info.get("message_replacements", None)
+
+        self.message_replacements = self.character_info.get(
+            "message_replacements", None
+        )
         self.supported_prefixes = self.character_info.get("supported_prefixes", None)
-        
-        self.max_history_length_messages = self.character_info.get("max_history_length_messages", 100)
-        self.restore_previous_history = self.character_info.get("restore_previous_history", False)
+
+        self.max_history_length_messages = self.character_info.get(
+            "max_history_length_messages", 100
+        )
+        self.restore_previous_history = self.character_info.get(
+            "restore_previous_history", False
+        )
 
         if self.restore_previous_history and exists(self.chat_history_filepath):
             # read the existing file and use it
-            self.openai_manager.chat_history = read_config_file(self.chat_history_filepath)
+            self.openai_manager.chat_history = read_config_file(
+                self.chat_history_filepath
+            )
         else:
-            #otherwise wipe it if it exists
+            # otherwise wipe it if it exists
             with open(self.chat_history_filepath, "w") as file:
                 file.write("")
             # and enter the first system message if provided
             if first_system_message is not None:
-                first_system_message_stringified = "\n".join(first_system_message["content"])
-                system_message_formated = {"role": "system", "content": [{"type": "text", "text": first_system_message_stringified}]}
+                first_system_message_stringified = "\n".join(
+                    first_system_message["content"]
+                )
+                system_message_formated = {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": first_system_message_stringified}
+                    ],
+                }
                 print("first_system_message:", system_message_formated)
                 self.openai_manager.chat_history.append(system_message_formated)
 
@@ -91,47 +132,62 @@ class CommanderGPT:
         self.image_listening_path = self.character_info.get("image_listening", None)
         self.image_thinking_path = self.character_info.get("image_thinking", None)
         self.image_error_path = self.character_info.get("image_error", None)
-        
-        self.image_azure_voice_style_root_path = self.character_info.get("image_azure_voice_style_root_path", None)
+
+        self.image_azure_voice_style_root_path = self.character_info.get(
+            "image_azure_voice_style_root_path", None
+        )
         self.character_pos = (0, SCREEN_HEIGHT)
         self.subtitles = None
         self.show_subtitles = self.character_info.get("show_subtitles", True)
         self.voice_style = None
         self.voice_image = None
-        self.user_text_color = self.character_info.get("user_text_color", [255, 255, 255])
-        self.character_text_color = self.character_info.get("character_text_color", [255, 124, 124])
-        self.azure_voice_style_images = {
-
-        }
+        self.user_text_color = self.character_info.get(
+            "user_text_color", [255, 255, 255]
+        )
+        self.character_text_color = self.character_info.get(
+            "character_text_color", [255, 124, 124]
+        )
+        self.azure_voice_style_images = {}
         if self.image_idle_path and self.image_talking_path:
             self.idle_image = pygame.image.load(f"assets/images/{self.image_idle_path}")
-            self.talking_image = pygame.image.load(f"assets/images/{self.image_talking_path}")
-            self.listening_image = pygame.image.load(f"assets/images/{self.image_listening_path}")
-            self.thinking_image = pygame.image.load(f"assets/images/{self.image_thinking_path}")
-            self.error_image = pygame.image.load(f"assets/images/{self.image_error_path}")
+            self.talking_image = pygame.image.load(
+                f"assets/images/{self.image_talking_path}"
+            )
+            self.listening_image = pygame.image.load(
+                f"assets/images/{self.image_listening_path}"
+            )
+            self.thinking_image = pygame.image.load(
+                f"assets/images/{self.image_thinking_path}"
+            )
+            self.error_image = pygame.image.load(
+                f"assets/images/{self.image_error_path}"
+            )
             if self.image_azure_voice_style_root_path and self.supported_prefixes:
                 for prefix in self.supported_prefixes:
-                    prefix_no_brackets = prefix.replace("(","").replace(")","")
+                    prefix_no_brackets = prefix.replace("(", "").replace(")", "")
                     file_name = f"{prefix_no_brackets}.png"
                     voice_style = self.supported_prefixes[prefix]
-                    self.azure_voice_style_images[voice_style] = pygame.image.load(f"assets/images/{self.image_azure_voice_style_root_path}{file_name}")
+                    self.azure_voice_style_images[voice_style] = pygame.image.load(
+                        f"assets/images/{self.image_azure_voice_style_root_path}{file_name}"
+                    )
 
             pygame.init()
-            pygame.display.set_caption('gpt')
+            pygame.display.set_caption("gpt")
             self.font = pygame.font.Font("assets/fonts/NotoSerifCJK-Regular.ttc", 42)
             self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
             self.update_screen(None, self.character_pos)
-        
-        
+
         self.state = None
         if not self.hide_character_when_idle:
             self.state = "idle"
 
         self.screen_shot_enabled = False
-        
+
         # Create thread to handle the AI stuff, they will terminate if the main process terminates
         thread_chatgpt = threading.Thread(target=self.handle_chatgpt, daemon=True)
-        non_blocking_toggles = threading.Thread(target=self.handle_non_blocking_toggles, daemon=True)
+        non_blocking_toggles = threading.Thread(
+            target=self.handle_non_blocking_toggles, daemon=True
+        )
 
         # Start the thread
         thread_chatgpt.start()
@@ -144,22 +200,28 @@ class CommanderGPT:
             self.screen_shot_enabled = not self.screen_shot_enabled
             print("Send screenshot with next message? ", self.screen_shot_enabled)
 
-    def update_screen(self, image, pos=(0,0), voice_image=None):
+    def update_screen(self, image, pos=(0, 0), voice_image=None):
         self.screen.fill((0, 255, 0))
-        
+
         if voice_image:
             self.screen.blit(voice_image, pos)
         elif image:
             self.screen.blit(image, pos)
-        
+
         if self.subtitles and self.show_subtitles:
-            display_text_with_wrap(screen=self.screen, font=self.font, text=self.subtitles, box_width=SCREEN_WIDTH-20, xpos=10, ypos=10, color=self.voice_color)
+            display_text_with_wrap(
+                screen=self.screen,
+                font=self.font,
+                text=self.subtitles,
+                box_width=SCREEN_WIDTH - 20,
+                xpos=10,
+                ypos=10,
+                color=self.voice_color,
+            )
 
         pygame.display.update()
-    
-    
-    def handle_chatgpt(self):
 
+    def handle_chatgpt(self):
         # start logic loops
         print(f"[green]\nStarting the loop, press num {self.mic_start_key} to begin")
         while True:
@@ -171,9 +233,11 @@ class CommanderGPT:
             self.state = "listening"
             self.subtitles = None
             self.voice_color = self.user_text_color
-            
+
             # get mic result
-            mic_result = self.speechtotext_manager.speechtotext_from_mic_continuous(stop_key=self.mic_stop_key, commander_gpt=self)
+            mic_result = self.speechtotext_manager.speechtotext_from_mic_continuous(
+                stop_key=self.mic_stop_key, commander_gpt=self
+            )
             self.subtitles = mic_result
             print("[green]\nDone listening to mic")
             self.state = "thinking"
@@ -182,11 +246,15 @@ class CommanderGPT:
             monitor_number = -1
             if self.screen_shot_enabled:
                 monitor_number = self.monitor_to_screenshot
-            openai_result = self.openai_manager.chat_with_history(prompt=mic_result, monitor_to_screenshot=monitor_number, max_history_length_messages=self.max_history_length_messages)
+            openai_result = self.openai_manager.chat_with_history(
+                prompt=mic_result,
+                monitor_to_screenshot=monitor_number,
+                max_history_length_messages=self.max_history_length_messages,
+            )
             self.subtitles = None
             if openai_result is None:
                 print("[red]\nThe AI had nothing to say or something went wrong.")
-                self.state="error"
+                self.state = "error"
                 continue
 
             if self.message_replacements is not None and openai_result is not None:
@@ -195,24 +263,35 @@ class CommanderGPT:
                     replace_with = replacement_info.get("replace_with", None)
                     if to_replace and replace_with:
                         openai_result = openai_result.replace(to_replace, replace_with)
-            
-            
+
             # write the results to chat_history as a backup
-            write_json_file(self.chat_history_filepath, self.openai_manager.chat_history)
-            
+            write_json_file(
+                self.chat_history_filepath, self.openai_manager.chat_history
+            )
+
             # submit to 11labs to get audio
             if self.use_elevenlabs_voice:
                 print("convert text to audio")
-                elevenlabs_output = self.elevenlabs_manager.text_to_audio(input_text=openai_result, voice=self.elevenlabs_voice, save_as_wave=True, subdirectory="assets/audio")
-            
+                elevenlabs_output = self.elevenlabs_manager.text_to_audio(
+                    input_text=openai_result,
+                    voice=self.elevenlabs_voice,
+                    save_as_wave=True,
+                    subdirectory="assets/audio",
+                )
+
             self.state = "talking"
             self.voice_color = self.character_text_color
             self.subtitles = openai_result
-            
+
             # play the audio
             if self.use_elevenlabs_voice:
                 print("play audio")
-                self.audio_manager.play_audio(file_path=elevenlabs_output, sleep_during_playback=True, delete_file=True, play_using_music=False)
+                self.audio_manager.play_audio(
+                    file_path=elevenlabs_output,
+                    sleep_during_playback=True,
+                    delete_file=True,
+                    play_using_music=False,
+                )
             else:
                 print("play audio using azure tts")
                 self.voice_style = None
@@ -221,19 +300,30 @@ class CommanderGPT:
                     for prefix in self.supported_prefixes:
                         if openai_result.startswith(prefix):
                             self.voice_style = self.supported_prefixes.get(prefix, None)
-                            voice_image_file_name = prefix.replace("(", "").replace(")", "")
-                            self.voice_image = self.azure_voice_style_images.get(voice_image_file_name, None)
+                            voice_image_file_name = prefix.replace("(", "").replace(
+                                ")", ""
+                            )
+                            self.voice_image = self.azure_voice_style_images.get(
+                                voice_image_file_name, None
+                            )
                             openai_result = openai_result.removeprefix(prefix)
-                self.speechtotext_manager.texttospeech_from_text(azure_voice_name=self.azure_voice_name, azure_voice_style=self.voice_style, text_to_speak=openai_result)
-            
-            self.state="idle"
+                self.speechtotext_manager.texttospeech_from_text(
+                    azure_voice_name=self.azure_voice_name,
+                    azure_voice_style=self.voice_style,
+                    text_to_speak=openai_result,
+                )
+
+            self.state = "idle"
             # if we hide the character then also hide the subtitles when they're done
             if self.hide_character_when_idle:
                 self.subtitles = None
 
-            print("[green]\n---\nFinished processing dialogue.\nReady for next input.\n---\n")
-            
-if __name__ == '__main__':
+            print(
+                "[green]\n---\nFinished processing dialogue.\nReady for next input.\n---\n"
+            )
+
+
+if __name__ == "__main__":
     commander_gpt = CommanderGPT()
     # main thread will handle visuals and minor events
     pop_up_speed = 30
@@ -241,29 +331,49 @@ if __name__ == '__main__':
         if commander_gpt.state == "talking":
             # show talking image
             if commander_gpt.character_pos[1] >= pop_up_speed:
-                commander_gpt.character_pos = (commander_gpt.character_pos[0], commander_gpt.character_pos[1]-pop_up_speed)
+                commander_gpt.character_pos = (
+                    commander_gpt.character_pos[0],
+                    commander_gpt.character_pos[1] - pop_up_speed,
+                )
             else:
-                commander_gpt.character_pos = (0, random.randint(0,10))
-            if random.randrange(0,100) < 5:
-                commander_gpt.update_screen(commander_gpt.talking_image, commander_gpt.character_pos, commander_gpt.voice_image)
-            elif random.randrange(0,100) < 5:
-                commander_gpt.update_screen(commander_gpt.idle_image, commander_gpt.character_pos, None)
-            
+                commander_gpt.character_pos = (0, random.randint(0, 10))
+            if random.randrange(0, 100) < 5:
+                commander_gpt.update_screen(
+                    commander_gpt.talking_image,
+                    commander_gpt.character_pos,
+                    commander_gpt.voice_image,
+                )
+            elif random.randrange(0, 100) < 5:
+                commander_gpt.update_screen(
+                    commander_gpt.idle_image, commander_gpt.character_pos, None
+                )
+
         elif commander_gpt.state == "idle":
             if commander_gpt.hide_character_when_idle:
-                if commander_gpt.character_pos[1] <= SCREEN_HEIGHT-pop_up_speed:
-                    commander_gpt.character_pos = (commander_gpt.character_pos[0], commander_gpt.character_pos[1]+pop_up_speed)
+                if commander_gpt.character_pos[1] <= SCREEN_HEIGHT - pop_up_speed:
+                    commander_gpt.character_pos = (
+                        commander_gpt.character_pos[0],
+                        commander_gpt.character_pos[1] + pop_up_speed,
+                    )
                 else:
                     commander_gpt.character_pos = (0, SCREEN_HEIGHT)
             else:
                 commander_gpt.character_pos = (0, 0)
-            commander_gpt.update_screen(commander_gpt.idle_image, commander_gpt.character_pos, None)
+            commander_gpt.update_screen(
+                commander_gpt.idle_image, commander_gpt.character_pos, None
+            )
         elif commander_gpt.state == "listening":
-            commander_gpt.update_screen(commander_gpt.listening_image, commander_gpt.character_pos, None)
+            commander_gpt.update_screen(
+                commander_gpt.listening_image, commander_gpt.character_pos, None
+            )
         elif commander_gpt.state == "thinking":
-            commander_gpt.update_screen(commander_gpt.thinking_image, commander_gpt.character_pos, None)
+            commander_gpt.update_screen(
+                commander_gpt.thinking_image, commander_gpt.character_pos, None
+            )
         elif commander_gpt.state == "error":
-            commander_gpt.update_screen(commander_gpt.error_image, commander_gpt.character_pos, None)
+            commander_gpt.update_screen(
+                commander_gpt.error_image, commander_gpt.character_pos, None
+            )
         else:
             # remove character from screen
             commander_gpt.update_screen(None)
