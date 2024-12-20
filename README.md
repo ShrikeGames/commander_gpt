@@ -5,6 +5,16 @@
 ## Inspiration
 Based on DougDoug's https://github.com/DougDougGithub/Babagaboosh/tree/main
 
+Key differences:
+- No OBS Websockets at all, instead it is an application that opens up a window for you to capture and use a chroma-key on.
+- Does not use the "keyboards" library to avoid needing to run as sudo/root on linux.
+- Instead of modifying the code for every use-case, it is instead driven by only 2 configuration files (you can still modify the code however you like).
+- Easy swapping between characters without making changes.
+- Customizable images that can match the state of the character including their emotion/voice style.
+- Cleaner code that only has what you need.
+- Documentation ;P
+- Allows toggling features on or off, including using Azure TTS instead of 11labs.
+
 ## Video Example
 You can check out this AI (as of 2024-12-19, now outdated) making all of the decisions in XCOM Enemy Unknown here:
 https://www.youtube.com/watch?v=x0U_EnhkBwI
