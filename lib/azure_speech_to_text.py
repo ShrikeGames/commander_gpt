@@ -1,5 +1,6 @@
 import azure.cognitiveservices.speech as speechsdk
 from .utils import wait_until_key
+from rich import print
 
 
 class SpeechToTextManager:
@@ -101,12 +102,11 @@ class SpeechToTextManager:
 
         return speech_synthesis_result
 
-    def speechtotext_from_mic_continuous(self, stop_key="8", commander_gpt=None):
+    def speechtotext_from_mic_continuous(self, stop_key="8"):
         """Performs continuous speech recognition using the microphone input.
 
         Args:
             stop_key (str, optional): The key to stop the speech recognition (default is "8").
-            commander_gpt (object, optional): An optional object for handling the recognized speech.
 
         Returns:
             str: The recognized speech as a single concatenated string.
@@ -130,8 +130,6 @@ class SpeechToTextManager:
                 evt (speechsdk.SpeechRecognitionEventArgs): The event argument containing recognition data.
             """
             # print(f"RECOGNIZING: {evt.result.text}")
-            if commander_gpt:
-                commander_gpt.subtitles = evt.result.text
 
         all_results = []
 
@@ -173,15 +171,13 @@ class SpeechToTextManager:
             # No real sample parallel work to do on this thread, so just wait for user to type stop.
             # Can't exit function or speech_recognizer will go out of scope and be destroyed while running.
             wait_until_key(key_to_match=stop_key)
-            if len(all_results) > 0:
-                print("\nEnding azure speech recognition\n")
-                self.azure_speechrecognizer.stop_continuous_recognition_async()
-                break
-            else:
-                print(
-                    "[yellow]\nYou tried to stop the recording before it finished recognizing any dialogue."
-                )
+            print("\nEnding azure speech recognition\n")
+            self.azure_speechrecognizer.stop_continuous_recognition_async()
+            break
+
         print("recognition stopped, main thread can exit now.")
+        if len(all_results) <= 0:
+            return None
 
         final_result = " ".join(all_results).strip()
         print(f"[green]\n\nHere’s the result we got!\n\n{final_result}\n\n")

@@ -29,7 +29,7 @@ class ElevenLabsManager:
 
     def text_to_audio(
         self,
-        commander_gpt,
+        ai_character,
         input_text: str,
         voice: str = "Alice",
         save_as_wave: bool = True,
@@ -41,7 +41,7 @@ class ElevenLabsManager:
         It also updates the state of the commander_gpt app so the character reflects the new state.
 
         Args:
-            commander_gpt (CommanderGPTApp): The app.
+            ai_character (AICharacter): The character speaking.
             input_text (str): The text to be converted to speech.
             voice (str, optional): The voice to use for speech synthesis. Defaults to "Doug VO Only".
             save_as_wave (bool, optional): Whether to save the output as a .wav file (True) or .mp3 (False). Defaults to True.
@@ -80,10 +80,14 @@ class ElevenLabsManager:
 
         # Save the generated audio to the specified file
         save(audio_saved, tts_file)
-        
-        commander_gpt.state = "talking"
-        commander_gpt.voice_color = commander_gpt.character_text_color
-        commander_gpt.subtitles = input_text
+
+        ai_character.state = "talking"
+        ai_character.voice_color = ai_character.character_text_color
+        ai_character.subtitles = input_text
+        # while this character talks, the others listen
+        for other_ai_character in ai_character.other_ai_characters:
+            other_ai_character.state = "listening"
+            other_ai_character.subtitles = None
 
         # play the saved audio file
         self.audio_manager.play_audio(

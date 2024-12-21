@@ -113,8 +113,6 @@ pip install -r requirements.txt
 - `openai_model_name`: What OpenAI model to use, EG: gpt-4o.
 - `input_voice_start_button`: The key defined to start the microphone recording of your prompt. Must be a pynput KeyCode. For special keys this is like `Key.home` but for regular keys it will just be `a` or `1`. Does not recgonize numpad keys.
 - `input_voice_end_button`: The key defined to stop recording the microphone and to trigger sending the result to OpenAI. Same limitations as above.
-- `input_voice_start_button_with_screenshot`: The key defined to toggle sending a screenshot alongside your recorded prompt from the microphone. Same limitations as above.
-- `screen_shot_enabled`: When starting the app up it will default to having screenshots being enabled if true, or disabled if false. Relates to above.
 - `monitor_to_screenshot`: When sending a screenshot this is the monitor id (EG: 1) to take the screenshot from. Everything on that monitor will be included.
 - `history`: A dictionary of keys containing configurations for the chat history.
   - EG:
@@ -185,11 +183,17 @@ pip install -r requirements.txt
 - `text_outline_width`: The width/strength of the outline around the subtitle's text.
 - `font_size`: The size of the subtitles.
 More configurations for subtitles may be added in the future, or by request.
-- `background_colour`: The background colour of the app, this allows you to chroma-key remove the background to have just the character and subtitles show up in OBS or other recording/video software. Can be a named colour such as "green" or a hexcode of the format "#00FF00".
 - `first_system_message`: A dictionary containing the `role` which should always be "system", and `content` which is a list of strings.
   - You can add as much or as little as you want to the `content` prompt, and the list is only for the sake of easier formatting, they are concatenated together with `\n` characters before being sent to OpenAI.
   - It is suggested you provide the AI descriptions of who they are, what their goal is, any particular behaviour you want them to have, and any initial information they should always have available to them.
   - You can also give it information about the available azure voice styles you have mapped.
+
+## system_config.json Structure
+This is a global config that has options not related to any one particular character.
+- `window_width`: The width of the app when it opens, in pixels.
+- `window_height`: The height of the app when it opens, in pixels.
+- `background_colour`: The background colour of the app, this allows you to chroma-key remove the background to have just the character and subtitles show up in OBS or other recording/video software. Can be a named colour such as "green" or a hexcode of the format "#00FF00".
+- `input_voice_start_button_with_screenshot`: The key defined to toggle sending a screenshot alongside your recorded prompt from the microphone. Same limitations as other key bindings.
 
 3. Add your character's images to assets/images
 It must have one image for each possible state of the character, and mapped voice style. See above documentation on the character_config.json for details.
@@ -197,9 +201,16 @@ It must have one image for each possible state of the character, and mapped voic
 ```
 .venv/bin/python3 commander_gpt.py your_characters_defined_name
 ```
-For example:
+- For example:
 ```
 .venv/bin/python3 commander_gpt.py commander
+```
+- You can also start the app with more than one character and have a group conversation.
+- In this case the AIs will share chat with each other so they know what the other(s) said, including your own input.
+- It is recommended they have different `input_voice_start_button` keys defined so you can prompt them separately.
+- For example this will introduce both the commander and alien characters defined in character_config.json to be in the same conversation:
+```
+.venv/bin/python3 commander_gpt.py commander alien
 ```
 5. Press the HOME key to start recording from your mic (or whatever key you defined in character_config.json)
 6. Talk as much as you want
@@ -224,7 +235,6 @@ DO NOT RUN AS SUDO IF ON LINUX.
 ## TODOs
 - Make the animation match the audio playback's pace
 - Investigate issue where openAI returned some characters that broke the Azure TTS (program still ran but it did not read it aloud)
-- Multiple character support (with shared chat history so they can talk to each other)
 - (Maybe) Would be nice to support full animations or 3D models easily
   - Could look at azure's virtual assistants as one option
 - (Maybe) Instead of sending images directly to OpenAI use another service to describe the image and send OpenAI the description

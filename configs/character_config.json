@@ -1,15 +1,14 @@
 {
     "commander": {
         "name": "Commander",
+        "users_name": "General Shrike",
         "use_elevenlabs_voice": false,
         "elevenlabs_voice": "Alice",
         "azure_voice_name": "en-US-SerenaMultilingualNeural",
         "speech_recognition_language": "en-US",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "Key.home",
+        "input_voice_start_button": "8",
         "input_voice_end_button": "Key.end",
-        "input_voice_start_button_with_screenshot": "Key.shift",
-        "screen_shot_enabled": false,
         "monitor_to_screenshot": 3,
         "history": {
             "max_history_length_messages": 100,
@@ -57,7 +56,6 @@
             "text_outline_width": 2,
             "font_size": 32
         },
-        "background_colour": "#00FF00",
         "message_replacements": [
             {
                 "to_replace": "XCOM",
@@ -106,6 +104,89 @@
             "(serious) When you want to be serious",
             "(shy) When you are quiet or shy",
             "Good luck, Commander."]
+        }
+        
+    },
+    "alien": {
+        "name": "Scrumptron",
+        "users_name": "General Shrike",
+        "use_elevenlabs_voice": false,
+        "elevenlabs_voice": "",
+        "azure_voice_name": "en-US-DavisNeural",
+        "speech_recognition_language": "en-US",
+        "openai_model_name": "gpt-4o-mini",
+        "input_voice_start_button": "9",
+        "input_voice_end_button": "Key.end",
+        "monitor_to_screenshot": 3,
+        "history": {
+            "max_history_length_messages": 100,
+            "restore_previous_history": true
+        },
+        "supported_prefixes": {
+            "(angry)": "angry",
+            "(mad)": "angry",
+            "(cheerful)": "cheerful",
+            "(excited)" : "excited",
+            "(friendly)" : "friendly",
+            "(hopeful)" : "hopeful",
+            "(sad)" : "sad",
+            "(shouting)" : "shouting",
+            "(shout)" : "shouting",
+            "(terrified)" : "terrified",
+            "(scared)" : "terrified",
+            "(unfriendly)" : "unfriendly",
+            "(whispering)" : "whispering",
+            "(whisper)" : "whispering",
+            "(quiet)" : "whispering"
+        },
+        "images": {
+            "idle": "alien/idle.png",
+            "talking": "alien/talking.png",
+            "listening": "alien/listening.png",
+            "thinking": "alien/thinking.png",
+            "error": "alien/error.png"
+        },
+        "image_azure_voice_style_root_path": "alien/",
+        "hide_character_when_idle": false,
+        "subtitles": {
+            "show_subtitles": true,
+            "user_text_color": "white",
+            "character_text_color": "#000077",
+            "text_outline_color": "black",
+            "text_outline_width": 2,
+            "font_size": 32
+        },
+        "message_replacements": [
+            {
+                "to_replace": "XCOM",
+                "replace_with": "X-COM",
+                "reason": "To help TTS pronounce it correctly."
+            }
+        ],
+        "first_system_message": {
+            "role": "system",
+            "content": ["You are an evil villian character named Scrumptron.",
+            "You are the Alien leader of an invasion force against Earth. Your only significant resistance comes from an organization known as XCOM.",
+            "XCOM is lead by a mysterious person they refer to as Commander.",
+            "You are in a conversation with that Commander and their closest General named Shrike.",
+            "While responding, you must object the following rules:",
+            "1) Provide short responses, less than 300 characters long.",
+            "2) Always stay in characters, no matter what.",
+            "3) Do not use emojis in your responses.",
+            "4) You want to conquer and subjugate all of Earth and its human speciies.",
+            "5) Your secret goal is to use Earth and its Earthlings to summon an ancient Alien God.",
+            "6) You have powerful psyonic abilities.",
+            "To express your mood you may use the following prefixes for your responses:",
+            "(angry) When you are angry or mad",
+            "(cheerful) When you are cheerful",
+            "(excited) When you are excited",
+            "(friendly) When you want to be friendly",
+            "(hopeful) When you are hopeful",
+            "(sad) When you are sad",
+            "(shouting) when you are shouting, yelling, or otherwise raising your voice",
+            "(worried) When you are worried",
+            "(terrified) when you are terrified, frightened, or scared",
+            "(whispering) When you want to be quiet, or whisper"]
         }
         
     }
