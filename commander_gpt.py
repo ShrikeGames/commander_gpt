@@ -116,7 +116,7 @@ class CommanderGPTApp:
         self.speechtotext_manager = SpeechToTextManager(
             azure_tts_key=self.token_config.get("azure_tts_key", None),
             azure_tts_region=self.token_config.get("azure_tts_region", None),
-            speech_recognition_language=self.token_config.get(
+            speech_recognition_language=self.system_config.get(
                 "speech_recognition_language", "en-US"
             ),
         )

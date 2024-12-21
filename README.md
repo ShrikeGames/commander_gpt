@@ -113,7 +113,6 @@ pip install -r requirements.txt
 - `use_elevenlabs_voice`: true/false - if true the app will use 11labs for TTS, if false will use azure TTS
 - `elevenlabs_voice`: If using 11labs it will use this voice, must be one available to you in 11labs.
 - `azure_voice_name`: If using azure TTS this is the name of the voice it will use, it must be one available to you. Check the microsoft docs for options: https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support
-- `speech_recognition_language`: Used for azure TTS, should match the language of the azure_voice_name you are using.
 - `openai_model_name`: What OpenAI model to use, EG: gpt-4o.
 - `input_voice_start_button`: The key defined to start the microphone recording of your prompt. Must be a pynput KeyCode. For special keys this is like `Key.home` but for regular keys it will just be `a` or `1`. Does not recgonize numpad keys.
 - `input_voice_end_button`: The key defined to stop recording the microphone and to trigger sending the result to OpenAI. Same limitations as above.
@@ -208,6 +207,7 @@ This is a global config that has options not related to any one particular chara
 - `window_height`: The height of the app when it opens, in pixels.
 - `background_colour`: The background colour of the app, this allows you to chroma-key remove the background to have just the character and subtitles show up in OBS or other recording/video software. Can be a named colour such as "green" or a hexcode of the format "#00FF00".
 - `input_voice_start_button_with_screenshot`: The key defined to toggle sending a screenshot alongside your recorded prompt from the microphone. Same limitations as other key bindings.
+- `speech_recognition_language`: Used for azure speech to text, this should match the language you are speaking.
 
 3. Add your character's images to assets/images
 It must have one image for each possible state of the character, and mapped voice style. See above documentation on the character_config.json for details.

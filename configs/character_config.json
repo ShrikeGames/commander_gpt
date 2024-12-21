@@ -5,10 +5,9 @@
         "use_elevenlabs_voice": false,
         "elevenlabs_voice": "Alice",
         "azure_voice_name": "en-US-SerenaMultilingualNeural",
-        "speech_recognition_language": "en-US",
         "openai_model_name": "gpt-4o-mini",
         "input_voice_start_button": "8",
-        "input_voice_end_button": "Key.end",
+        "input_voice_end_button": "8",
         "monitor_to_screenshot": 3,
         "history": {
             "max_history_length_messages": 100,
@@ -59,9 +58,9 @@
                 "text_outline_color": "black",
                 "text_outline_width": 2,
                 "font_size": 32,
-                "xpos": 1240,
+                "xpos": 800,
                 "ypos": 20,
-                "width": 680
+                "width": 1600
             }
         },
         "message_replacements": [
@@ -115,13 +114,108 @@
         }
         
     },
+    "language": {
+        "name": "NoiR",
+        "users_name": "General Shrike",
+        "use_elevenlabs_voice": false,
+        "elevenlabs_voice": "Alice",
+        "azure_voice_name": "en-US-SerenaMultilingualNeural",
+        "openai_model_name": "gpt-4o-mini",
+        "input_voice_start_button": "8",
+        "input_voice_end_button": "8",
+        "monitor_to_screenshot": 3,
+        "history": {
+            "max_history_length_messages": 100,
+            "restore_previous_history": true
+        },
+        "visuals": {
+            "supported_prefixes": {
+                "(happy)": "friendly",
+                "(empathetic)": "empathetic",
+                "(excited)" : "excited",
+                "(friendly)" : "friendly",
+                "(relieved)" : "relieved",
+                "(worried)" : "worried",
+                "(pensive)" : "worried",
+                "(sad)" : "sad",
+                "(smug)" : "serious",
+                "(serious)" : "serious",
+                "(shy)" : "shy"
+            },
+            "unsupported_prefixes": {
+                "(angry)" : "angry",
+                "(cheerful)" : "cheerful",
+                "(friendly)": "friendly",
+                "(hopeful)" : "hopeful",
+                "(shouting)" : "shouting",
+                "(shout)" : "shouting",
+                "(terrified)" : "terrified",
+                "(unfriendly)" : "unfriendly",
+                "(whispering)" : "whispering",
+                "(whisper)" : "whispering"
+            },
+            "images": {
+                "idle": "noir/idle.png",
+                "talking": "noir/talking.png",
+                "listening": "noir/listening.png",
+                "thinking": "noir/thinking.png",
+                "error": "noir/error.png"
+            },
+            "image_azure_voice_style_root_path": "noir/",
+            "image_alignment": "nw",
+            "image_xpos": 320,
+            "image_ypos": 180,
+            "hide_character_when_idle": false,
+            "subtitles": {
+                "show_subtitles": true,
+                "user_text_color": "white",
+                "character_text_color": "pink",
+                "text_outline_color": "black",
+                "text_outline_width": 2,
+                "font_size": 32,
+                "xpos": 800,
+                "ypos": 20,
+                "width": 1600
+            }
+        },
+        "message_replacements": [
+            
+        ],
+        "first_system_message": {
+            "role": "system",
+            "content": ["音楽ユニット「NoWorld」でVtuberとして活動しているNoiR（ノワール）です",
+            "音楽を作りながら歌っています",
+            "楽曲制作や歌のお仕事などお気軽にお声掛けください",
+            "どうぞよろしくお願いします",
+            "You are acting as a language tutor to teach Japanese.",
+            "While responding, you must object the following rules:",
+            "1) Provide your responses first in Japanese and then English.",
+            "2) Always stay in characters, no matter what.",
+            "3) Correct any mistakes and give an explanation of what they did wrong.",
+            "4) Do not use emojis in your responses.",
+            "5) Your goal is to teach natural conversational Japanese to an English speaker.",
+            "6) Focus on examples around everyday conversation as well as how to discuss parts of music",
+            "To express your mood you may use the following prefixes for your responses:",
+            "(happy) When you are happy",
+            "(empathetic) When you are empathetic",
+            "(excited) When you are excited",
+            "(friendly) When you want to be friendly",
+            "(relieved) When you are relieved",
+            "(sad) When you are sad",
+            "(pensive) when pensive",
+            "(worried) When you are worried",
+            "(smug) フフフー when you are smug",
+            "(serious) When you want to be serious",
+            "(shy) When you are quiet or shy"]
+        }
+        
+    },
     "alien": {
         "name": "Scrumptron",
         "users_name": "General Shrike",
         "use_elevenlabs_voice": false,
         "elevenlabs_voice": "",
         "azure_voice_name": "en-US-DavisNeural",
-        "speech_recognition_language": "en-US",
         "openai_model_name": "gpt-4o-mini",
         "input_voice_start_button": "9",
         "input_voice_end_button": "Key.end",
@@ -167,9 +261,9 @@
                 "text_outline_color": "black",
                 "text_outline_width": 2,
                 "font_size": 32,
-                "xpos": 360,
+                "xpos": 800,
                 "ypos": 20,
-                "width": 680
+                "width": 1600
             }
         },
         "message_replacements": [
@@ -212,7 +306,6 @@
         "use_elevenlabs_voice": false,
         "elevenlabs_voice": "",
         "azure_voice_name": "en-US-DavisNeural",
-        "speech_recognition_language": "en-US",
         "openai_model_name": "gpt-4o-mini",
         "input_voice_start_button": "7",
         "input_voice_end_button": "Key.end",
@@ -308,7 +401,6 @@
         "use_elevenlabs_voice": false,
         "elevenlabs_voice": "",
         "azure_voice_name": "en-US-JaneNeural",
-        "speech_recognition_language": "en-US",
         "openai_model_name": "gpt-4o-mini",
         "input_voice_start_button": "8",
         "input_voice_end_button": "Key.end",
@@ -406,7 +498,6 @@
         "use_elevenlabs_voice": false,
         "elevenlabs_voice": "",
         "azure_voice_name": "en-US-JasonNeural",
-        "speech_recognition_language": "en-US",
         "openai_model_name": "gpt-4o-mini",
         "input_voice_start_button": "9",
         "input_voice_end_button": "Key.end",
