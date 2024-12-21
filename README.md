@@ -109,6 +109,7 @@ pip install -r requirements.txt
 - EG: `python3 commander_gpt first_character` or `python3 commander_gpt second_character`
 - For each character you can configure things to its specific needs.
 - `name`: The name of the character, used to record and load the chat history.
+- `users_name`: The name of the user (you).
 - `use_elevenlabs_voice`: true/false - if true the app will use 11labs for TTS, if false will use azure TTS
 - `elevenlabs_voice`: If using 11labs it will use this voice, must be one available to you in 11labs.
 - `azure_voice_name`: If using azure TTS this is the name of the voice it will use, it must be one available to you. Check the microsoft docs for options: https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support
