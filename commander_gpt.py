@@ -289,9 +289,13 @@ class CommanderGPTApp:
             wait_until_key(key_to_match=ai_character.mic_start_key)
 
             print("[yellow]\nListening to mic")
+            # clear state of ALL characters if you start talking to one of them
+            for ai_char in self.ai_characters:
+                ai_char.state = "idle"
+                ai_char.subtitles = None
+                ai_char.voice_color = ai_character.user_text_color
+            
             ai_character.state = "listening"
-            ai_character.subtitles = None
-            ai_character.voice_color = ai_character.user_text_color
 
             # get mic result
             mic_result = self.speechtotext_manager.speechtotext_from_mic_continuous(
