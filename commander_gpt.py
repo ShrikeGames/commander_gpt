@@ -252,6 +252,9 @@ class CommanderGPTApp:
             )
         except Exception as e:
             print(f"[red]\nError loading image: {e}")
+            print(file_path)
+            ai_character.voice_style = None
+            ai_character.voice_image = None
 
     def init_ai_connections(self):
         """Initializes the main thread that will handle the connections to the AI endpoints.

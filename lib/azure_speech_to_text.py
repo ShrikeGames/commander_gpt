@@ -38,6 +38,7 @@ class SpeechToTextManager:
             self.azure_speechconfig.speech_recognition_language = (
                 speech_recognition_language
             )
+            print(f"speech_recognition_language: {speech_recognition_language}")
         except Exception as e:
             print("[red]\nFailed to setup azure speech")
             exit(e)
