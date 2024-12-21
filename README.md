@@ -16,7 +16,7 @@ Key differences:
 - Documentation ;P
 - Allows toggling features on or off, including using Azure TTS instead of 11labs.
 - Easier multi-lingual support (EG: English and Japanese at the same time).
-- Can allow arbitray amounts of characters to talk together, and with you, just be providing their configuration names as arguments.
+- Can allow arbitrary amounts of characters to talk together, and with you, just be providing their configuration names as arguments.
   - So if you want them to talk to each other, play DND, have an entire council of advisors, etc you can
   - Or just have a regular 1-on-1 conversation.
 
@@ -226,11 +226,11 @@ It must have one image for each possible state of the character, and mapped voic
 ```
 .venv/bin/python3 commander_gpt.py commander alien
 ```
-5. Press the HOME key to start recording from your mic (or whatever key you defined in character_config.json)
+5. Press the configured key to start recording from your mic (defined in character_config.json)
 6. Talk as much as you want
 7. If you want a screenshot to be included with your message then you can toggle that on or off with SHIFT (or button defined in character_config.json)
 8. Wait a second or two after you are done talking to allow the speech-to-text to finish
-9. Press the END key (or button defined in character_config.json) to send the transcribed audio to ChatGPT via OpenAI
+9. Press the configured key (defined in character_config.json) to send the transcribed audio to ChatGPT via OpenAI
 10. when a response from OpenAI is returned it will process it and send it to either 11labs or azure to convert to audio
 11. It will now play the audio of the character talking and show the image of the character.
 12. When the character is done talking you can return to step 5 and repeat to continue the conversation.
@@ -247,8 +247,8 @@ DO NOT RUN AS SUDO IF ON LINUX.
 
 
 ## TODOs
-- Allow greater control over size and position of character images and subtitles so they don't have to be the same size as the window.
 - (Maybe) Make the animation match the audio playback's pace
+- Improve the animation effect.
 - Investigate issue where openAI returned some characters that broke the Azure TTS (program still ran but it did not read it aloud)
 - (Maybe) Would be nice to support full animations or 3D models easily
   - Could look at azure's virtual assistants as one option
