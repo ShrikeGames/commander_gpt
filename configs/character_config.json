@@ -14,47 +14,55 @@
             "max_history_length_messages": 100,
             "restore_previous_history": true
         },
-        "supported_prefixes": {
-            "(happy)": "friendly",
-            "(empathetic)": "empathetic",
-            "(excited)" : "excited",
-            "(friendly)" : "friendly",
-            "(relieved)" : "relieved",
-            "(worried)" : "worried",
-            "(pensive)" : "worried",
-            "(sad)" : "sad",
-            "(smug)" : "serious",
-            "(serious)" : "serious",
-            "(shy)" : "shy"
-        },
-        "unsupported_prefixes": {
-            "(angry)" : "angry",
-            "(cheerful)" : "cheerful",
-            "(friendly)": "friendly",
-            "(hopeful)" : "hopeful",
-            "(shouting)" : "shouting",
-            "(shout)" : "shouting",
-            "(terrified)" : "terrified",
-            "(unfriendly)" : "unfriendly",
-            "(whispering)" : "whispering",
-            "(whisper)" : "whispering"
-        },
-        "images": {
-            "idle": "noir/idle.png",
-            "talking": "noir/talking.png",
-            "listening": "noir/listening.png",
-            "thinking": "noir/thinking.png",
-            "error": "noir/error.png"
-        },
-        "image_azure_voice_style_root_path": "noir/",
-        "hide_character_when_idle": false,
-        "subtitles": {
-            "show_subtitles": true,
-            "user_text_color": "white",
-            "character_text_color": "pink",
-            "text_outline_color": "black",
-            "text_outline_width": 2,
-            "font_size": 32
+        "visuals": {
+            "supported_prefixes": {
+                "(happy)": "friendly",
+                "(empathetic)": "empathetic",
+                "(excited)" : "excited",
+                "(friendly)" : "friendly",
+                "(relieved)" : "relieved",
+                "(worried)" : "worried",
+                "(pensive)" : "worried",
+                "(sad)" : "sad",
+                "(smug)" : "serious",
+                "(serious)" : "serious",
+                "(shy)" : "shy"
+            },
+            "unsupported_prefixes": {
+                "(angry)" : "angry",
+                "(cheerful)" : "cheerful",
+                "(friendly)": "friendly",
+                "(hopeful)" : "hopeful",
+                "(shouting)" : "shouting",
+                "(shout)" : "shouting",
+                "(terrified)" : "terrified",
+                "(unfriendly)" : "unfriendly",
+                "(whispering)" : "whispering",
+                "(whisper)" : "whispering"
+            },
+            "images": {
+                "idle": "noir/idle.png",
+                "talking": "noir/talking.png",
+                "listening": "noir/listening.png",
+                "thinking": "noir/thinking.png",
+                "error": "noir/error.png"
+            },
+            "image_azure_voice_style_root_path": "noir/",
+            "image_alignment": "nw",
+            "image_xpos": 320,
+            "image_ypos": 180,
+            "hide_character_when_idle": false,
+            "subtitles": {
+                "show_subtitles": true,
+                "user_text_color": "white",
+                "character_text_color": "pink",
+                "text_outline_color": "black",
+                "text_outline_width": 2,
+                "font_size": 32,
+                "xpos": 1240,
+                "ypos": 20,
+                "width": 680
+            }
         },
         "message_replacements": [
             {
@@ -122,39 +130,47 @@
             "max_history_length_messages": 100,
             "restore_previous_history": true
         },
-        "supported_prefixes": {
-            "(angry)": "angry",
-            "(mad)": "angry",
-            "(cheerful)": "cheerful",
-            "(excited)" : "excited",
-            "(friendly)" : "friendly",
-            "(hopeful)" : "hopeful",
-            "(sad)" : "sad",
-            "(shouting)" : "shouting",
-            "(shout)" : "shouting",
-            "(terrified)" : "terrified",
-            "(scared)" : "terrified",
-            "(unfriendly)" : "unfriendly",
-            "(whispering)" : "whispering",
-            "(whisper)" : "whispering",
-            "(quiet)" : "whispering"
-        },
-        "images": {
-            "idle": "alien/idle.png",
-            "talking": "alien/talking.png",
-            "listening": "alien/listening.png",
-            "thinking": "alien/thinking.png",
-            "error": "alien/error.png"
-        },
-        "image_azure_voice_style_root_path": "alien/",
-        "hide_character_when_idle": false,
-        "subtitles": {
-            "show_subtitles": true,
-            "user_text_color": "white",
-            "character_text_color": "#000077",
-            "text_outline_color": "black",
-            "text_outline_width": 2,
-            "font_size": 32
+        "visuals": {
+            "supported_prefixes": {
+                "(angry)": "angry",
+                "(mad)": "angry",
+                "(cheerful)": "cheerful",
+                "(excited)" : "excited",
+                "(friendly)" : "friendly",
+                "(hopeful)" : "hopeful",
+                "(sad)" : "sad",
+                "(shouting)" : "shouting",
+                "(shout)" : "shouting",
+                "(terrified)" : "terrified",
+                "(scared)" : "terrified",
+                "(unfriendly)" : "unfriendly",
+                "(whispering)" : "whispering",
+                "(whisper)" : "whispering",
+                "(quiet)" : "whispering"
+            },
+            "images": {
+                "idle": "alien/idle.png",
+                "talking": "alien/talking.png",
+                "listening": "alien/listening.png",
+                "thinking": "alien/thinking.png",
+                "error": "alien/error.png"
+            },
+            "image_azure_voice_style_root_path": "alien/",
+            "hide_character_when_idle": false,
+            "image_alignment": "nw",
+            "image_xpos": 0,
+            "image_ypos": 180,
+            "subtitles": {
+                "show_subtitles": true,
+                "user_text_color": "white",
+                "character_text_color": "#000077",
+                "text_outline_color": "black",
+                "text_outline_width": 2,
+                "font_size": 32,
+                "xpos": 360,
+                "ypos": 20,
+                "width": 680
+            }
         },
         "message_replacements": [
             {

@@ -1,6 +1,6 @@
 {
-    "window_width": 1280,
-    "window_height": 720,
+    "window_width": 1600,
+    "window_height": 900,
     "background_colour": "#00FF00",
     "input_voice_start_button_with_screenshot": "Key.shift"
 }

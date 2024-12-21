@@ -121,7 +121,7 @@ class CommanderGPTApp:
             ),
         )
 
-    def init_visuals(self, root):
+    def init_visuals(self, root: tk.Tk):
         """Initializes the main window and canvas for visual display.
 
         Sets up the root window size, title, and the canvas for drawing. Initializes the font used for text display.
@@ -133,6 +133,7 @@ class CommanderGPTApp:
         self.root = root
         self.root.title("GPT")
         self.root.geometry(f"{self.window_width}x{self.window_height}")
+        self.root.resizable = False
         self.image_cache = {}
         # Create a canvas to draw text with outline
         self.canvas = tk.Canvas(
@@ -171,12 +172,16 @@ class CommanderGPTApp:
 
                     character_image = ai_character.voice_image
                     self.show_image(
-                        character_image, offset_y=ai_character.image_offset_y
+                        character_image,
+                        offset_y=ai_character.image_offset_y,
+                        ai_character=ai_character,
                     )
 
                 else:
                     self.show_image(
-                        ai_character.images_by_state.get(ai_character.state), offset_y=0
+                        ai_character.images_by_state.get(ai_character.state),
+                        offset_y=0,
+                        ai_character=ai_character,
                     )
 
         # for each character draw their subtitles on the screen (so they're on top of all character images)
@@ -201,28 +206,28 @@ class CommanderGPTApp:
                 -ai_character.text_outline_width, ai_character.text_outline_width + 1
             ):
                 self.canvas.create_text(
-                    (self.window_width * 0.5) + x_offset + 20,
-                    20 + y_offset,
+                    ai_character.subtitle_xpos + x_offset,
+                    ai_character.subtitle_ypos + y_offset,
                     text=ai_character.subtitles,
                     font=ai_character.font,
                     fill=ai_character.text_outline_color,
                     anchor="n",
-                    width=self.window_width - 40,
+                    width=ai_character.subtitle_width,
                     justify="center",
                 )
 
         self.canvas.create_text(
-            20 + self.window_width * 0.5,
-            20,
+            ai_character.subtitle_xpos,
+            ai_character.subtitle_ypos,
             text=ai_character.subtitles,
             font=ai_character.font,
             fill=ai_character.voice_color,
             anchor="n",
-            width=self.window_width - 40,
+            width=ai_character.subtitle_width,
             justify="center",
         )
 
-    def show_image(self, file_path: str, offset_y: int = 0):
+    def show_image(self, file_path: str, offset_y: int, ai_character: AICharacter):
         """Displays an image on the canvas.
 
         Tries to load the image from the specified file path and display it centered on the canvas.
@@ -239,11 +244,11 @@ class CommanderGPTApp:
                 image = PhotoImage(file=file_path)
                 self.image_cache[file_path] = image
 
-            # TODO allow character to position themselves on the screen through their config
             self.canvas.create_image(
-                self.window_width * 0.5,
-                self.window_height * 0.5 + offset_y,
+                ai_character.image_xpos,
+                ai_character.image_ypos + offset_y,
                 image=image,
+                anchor=ai_character.image_alignment,
             )
         except Exception as e:
             print(f"[red]\nError loading image: {e}")

@@ -80,23 +80,21 @@ class AICharacter:
             "restore_previous_history", False
         )
 
+        self.visuals_config = self.character_info.get("visuals", {})
+
         # subtitles configs
-        self.show_subtitles = self.character_info.get("subtitles", {}).get(
-            "show_subtitles", False
-        )
-        self.user_text_color = self.character_info.get("subtitles", {}).get(
-            "user_text_color", False
-        )
-        self.character_text_color = self.character_info.get("subtitles", {}).get(
+        self.subtitles_config = self.visuals_config.get("subtitles", {})
+        self.show_subtitles = self.subtitles_config.get("show_subtitles", False)
+        self.user_text_color = self.subtitles_config.get("user_text_color", False)
+        self.character_text_color = self.subtitles_config.get(
             "character_text_color", False
         )
-        self.text_outline_color = self.character_info.get("subtitles", {}).get(
-            "text_outline_color", False
-        )
-        self.text_outline_width = self.character_info.get("subtitles", {}).get(
-            "text_outline_width", 2
-        )
-        self.font_size = self.character_info.get("subtitles", {}).get("font_size", 32)
+        self.text_outline_color = self.subtitles_config.get("text_outline_color", False)
+        self.text_outline_width = self.subtitles_config.get("text_outline_width", 2)
+        self.font_size = self.subtitles_config.get("font_size", 32)
+        self.subtitle_xpos = self.subtitles_config.get("xpos", 20)
+        self.subtitle_ypos = self.subtitles_config.get("ypos", 20)
+        self.subtitle_width = self.subtitles_config.get("width", 1280)
 
         self.font = tkFont.Font(
             family="assets/fonts/NotoSerifCJK-Regular.ttc",
@@ -105,13 +103,16 @@ class AICharacter:
         )
 
         # character visuals configs
-        self.hide_character_when_idle = self.character_info.get(
+        self.hide_character_when_idle = self.visuals_config.get(
             "hide_character_when_idle", True
         )
+        self.image_alignment = self.visuals_config.get("image_alignment", "n")
+        self.image_xpos = self.visuals_config.get("image_xpos", 0)
+        self.image_ypos = self.visuals_config.get("image_ypos", 0)
 
-        self.supported_prefixes = self.character_info.get("supported_prefixes", {})
-        self.image_paths = self.character_info.get("images", {})
-        self.image_azure_voice_style_root_path = self.character_info.get(
+        self.supported_prefixes = self.visuals_config.get("supported_prefixes", {})
+        self.image_paths = self.visuals_config.get("images", {})
+        self.image_azure_voice_style_root_path = self.visuals_config.get(
             "image_azure_voice_style_root_path", ""
         )
         # all of the default states (supported by both Azure TTS and 11labs)

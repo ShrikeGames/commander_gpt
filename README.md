@@ -168,6 +168,11 @@ pip install -r requirements.txt
 ```json
 "image_azure_voice_style_root_path": "noir/"
 ```
+- `image_alignment`: The direction in which the position is dirived from. 
+  - EG: "nw" will use the top left corner for calculating distance of x and y pos.
+- `image_xpos`: The x position in pixels to move the character image, derived from the above `image_alignment` location.
+- `image_upos`: The xu position in pixels to move the character image, derived from the above `image_alignment` location.
+- `hide_character_when_idle`: If true will hide the character when they are idle, otherwise they will always show on screen.
 - `subtitles`: A dictionary of configuration options for customizing the subtitles of you and the character if you want them to show on screen.
   - EG:
 ```json
@@ -177,7 +182,10 @@ pip install -r requirements.txt
     "character_text_color": "pink",
     "text_outline_color": "black",
     "text_outline_width": 2,
-    "font_size": 32
+    "font_size": 32,
+    "xpos": 1240,
+    "ypos": 20,
+    "width": 680
 },
 ```
 - `show_subtitles`: If true then subtitles will show when you are recording a prompt from your mic, or when the character is responding. IF false, subtitles will not be displayed.
@@ -186,7 +194,9 @@ pip install -r requirements.txt
 - `text_outline_color`: The colour outline drawn around the subtitles. Can be a named colour such as "black" or a hexcode of the format "#000000".
 - `text_outline_width`: The width/strength of the outline around the subtitle's text.
 - `font_size`: The size of the subtitles.
-More configurations for subtitles may be added in the future, or by request.
+- `xpos`: The x position, in pixels, for the subtitles, representing the horizontal center of the text box area.
+- `ypos`: The y position, in pixels, for the subtitles, representing the top of the text box area.
+- `width`: The total width, in pixels, the subtitles can fill out before wrapping to the next line.
 - `first_system_message`: A dictionary containing the `role` which should always be "system", and `content` which is a list of strings.
   - You can add as much or as little as you want to the `content` prompt, and the list is only for the sake of easier formatting, they are concatenated together with `\n` characters before being sent to OpenAI.
   - It is suggested you provide the AI descriptions of who they are, what their goal is, any particular behaviour you want them to have, and any initial information they should always have available to them.
