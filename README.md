@@ -16,6 +16,9 @@ Key differences:
 - Documentation ;P
 - Allows toggling features on or off, including using Azure TTS instead of 11labs.
 - Easier multi-lingual support (EG: English and Japanese at the same time).
+- Can allow arbitray amounts of characters to talk together, and with you, just be providing their configuration names as arguments.
+  - So if you want them to talk to each other, play DND, have an entire council of advisors, etc you can
+  - Or just have a regular 1-on-1 conversation.
 
 ## Video Example
 ### Short Example
