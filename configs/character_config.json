@@ -214,7 +214,7 @@
         "azure_voice_name": "en-US-DavisNeural",
         "speech_recognition_language": "en-US",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "1",
+        "input_voice_start_button": "7",
         "input_voice_end_button": "Key.end",
         "monitor_to_screenshot": 3,
         "history": {
@@ -310,7 +310,7 @@
         "azure_voice_name": "en-US-JaneNeural",
         "speech_recognition_language": "en-US",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "2",
+        "input_voice_start_button": "8",
         "input_voice_end_button": "Key.end",
         "monitor_to_screenshot": 3,
         "history": {
@@ -408,7 +408,7 @@
         "azure_voice_name": "en-US-JasonNeural",
         "speech_recognition_language": "en-US",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "3",
+        "input_voice_start_button": "9",
         "input_voice_end_button": "Key.end",
         "monitor_to_screenshot": 3,
         "history": {
