@@ -26,17 +26,23 @@ class SpeechToTextManager:
             Exception: If the Azure Speech configuration fails to initialize.
         """
         try:
+            # For user mic input
             self.azure_speechconfig = speechsdk.SpeechConfig(
-                subscription=azure_tts_key, region=azure_tts_region
+                subscription=azure_tts_key, region=azure_tts_region, speech_recognition_language=speech_recognition_language
             )
+            self.azure_audioconfig = speechsdk.audio.AudioConfig(
+                use_default_microphone=True
+            )
+            self.azure_speechrecognizer = speechsdk.SpeechRecognizer(
+                speech_config=self.azure_speechconfig, audio_config=self.azure_audioconfig, language=speech_recognition_language
+            )
+
+            # For TTS output (what the AI says)
             self.output_speech_config = speechsdk.SpeechConfig(
                 subscription=azure_tts_key, region=azure_tts_region
             )
             self.output_audio_config = speechsdk.audio.AudioOutputConfig(
                 use_default_speaker=True
-            )
-            self.azure_speechconfig.speech_recognition_language = (
-                speech_recognition_language
             )
             print(f"speech_recognition_language: {speech_recognition_language}")
         except Exception as e:
@@ -116,12 +122,6 @@ class SpeechToTextManager:
         Raises:
             None: Prints any errors or details during the speech recognition process.
         """
-        self.azure_audioconfig = speechsdk.audio.AudioConfig(
-            use_default_microphone=True
-        )
-        self.azure_speechrecognizer = speechsdk.SpeechRecognizer(
-            speech_config=self.azure_speechconfig, audio_config=self.azure_audioconfig
-        )
 
         done = False
 
