@@ -130,7 +130,7 @@ class AICharacter:
         # 1 for down, -1 for up
         self.image_offset_y = 0
         self.movement_direction = 1
-        self.movement_speed = 3
+        self.movement_speed = 2
         self.image_max_offset = 9
         self.image_min_offset = 0
 

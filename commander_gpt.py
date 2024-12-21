@@ -290,7 +290,7 @@ class CommanderGPTApp:
 
             # get mic result
             mic_result = self.speechtotext_manager.speechtotext_from_mic_continuous(
-                stop_key=ai_character.mic_stop_key
+                stop_key=ai_character.mic_stop_key, ai_character=ai_character
             )
             ai_character.subtitles = mic_result
             print("[green]\nDone listening to mic")
