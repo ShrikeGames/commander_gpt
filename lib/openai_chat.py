@@ -34,6 +34,7 @@ class OpenAiManager:
         """Asks a question to the OpenAI model, including the full conversation history, with optional image input.
 
         Args:
+            ai_character (AICharacter): The character who is being prompted to talk.
             prompt (str, optional): The question or prompt to send to the model. Defaults to an empty string.
             monitor_to_screenshot (int, optional): The monitor number to take a screenshot from. If positive, the screenshot will be included. Defaults to -1 (no screenshot).
             max_history_length_messages (int, optional): The maximum number of messages to keep in the conversation history. Older messages will be discarded. Defaults to 100.

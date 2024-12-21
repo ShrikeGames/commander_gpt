@@ -9,7 +9,16 @@ import tkinter.font as tkFont
 
 
 class AICharacter:
+    """Representation of an AI Character."""
+
     def __init__(self, commander_gpt, config: dict, chat_history_filepath: str):
+        """Initializes the OpenAiManager with an API key for OpenAI access.
+
+        Args:
+            commander_gpt (CommanderGPTApp): The commander gpt app.
+            config (dict): A dictionary of configs specific to this character.
+            chat_history_filepath (str): The path to where this character should store its history.
+        """
         self.character_info = config
         self.commander_gpt = commander_gpt
         self.chat_history_filepath = chat_history_filepath
@@ -19,6 +28,10 @@ class AICharacter:
         self.init_chat_history()
 
     def init_configs(self):
+        """Initializes configuration settings for character.
+
+        Extracts config values from the character_info dictionary.
+        """
         self.name = self.character_info.get("name", "AI")
         self.users_name = self.character_info.get("users_name", "Player")
 
@@ -129,7 +142,10 @@ class AICharacter:
         self.voice_color = "white"
 
     def init_libs(self):
-        # Use to communicate with chatGPT through OpenAI
+        """Initializes libraries unique to this character.
+
+        Creates an OpenAIManager to communicate with chatGPT.
+        """
         self.openai_manager = OpenAiManager(
             openai_api_key=self.commander_gpt.token_config.get("openai_api_key", None)
         )
