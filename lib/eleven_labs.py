@@ -2,6 +2,7 @@ from elevenlabs.client import ElevenLabs
 from elevenlabs import save, Voice
 import time
 import os
+from .audio_player import AudioManager
 
 
 class ElevenLabsManager:
@@ -24,17 +25,23 @@ class ElevenLabsManager:
             self.voice_to_id[voice.name] = voice.voice_id
         self.voice_to_settings = {}
 
+        self.audio_manager = AudioManager()
+
     def text_to_audio(
         self,
+        commander_gpt,
         input_text: str,
         voice: str = "Alice",
         save_as_wave: bool = True,
         subdirectory: str = "",
         model_id: str = "eleven_monolingual_v1",
     ) -> str:
-        """Converts input text to speech and saves it as an audio file.
+        """Converts input text to speech and saves it as an audio file, then plays it.
+
+        It also updates the state of the commander_gpt app so the character reflects the new state.
 
         Args:
+            commander_gpt (CommanderGPTApp): The app.
             input_text (str): The text to be converted to speech.
             voice (str, optional): The voice to use for speech synthesis. Defaults to "Doug VO Only".
             save_as_wave (bool, optional): Whether to save the output as a .wav file (True) or .mp3 (False). Defaults to True.
@@ -73,5 +80,17 @@ class ElevenLabsManager:
 
         # Save the generated audio to the specified file
         save(audio_saved, tts_file)
+        
+        commander_gpt.state = "talking"
+        commander_gpt.voice_color = commander_gpt.character_text_color
+        commander_gpt.subtitles = input_text
+
+        # play the saved audio file
+        self.audio_manager.play_audio(
+            file_path=tts_file,
+            sleep_during_playback=True,
+            delete_file=True,
+            play_using_music=False,
+        )
 
         return tts_file

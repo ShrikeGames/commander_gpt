@@ -11,7 +11,7 @@ from lib.utils import (
 from lib.azure_speech_to_text import SpeechToTextManager
 from lib.openai_chat import OpenAiManager
 from lib.eleven_labs import ElevenLabsManager
-from lib.audio_player import AudioManager
+
 from rich import print
 from os.path import exists
 
@@ -225,7 +225,6 @@ class CommanderGPTApp:
         self.openai_manager = OpenAiManager(
             openai_api_key=self.token_config.get("openai_api_key", None)
         )
-        self.audio_manager = AudioManager()
 
     def init_visuals(self, root):
         """Initializes the main window and canvas for visual display.
@@ -420,31 +419,22 @@ class CommanderGPTApp:
 
             # submit to 11labs to get audio
             if self.use_elevenlabs_voice:
-                print("convert text to audio")
-                elevenlabs_output = self.elevenlabs_manager.text_to_audio(
+                print("convert text to audio and play it")
+                self.elevenlabs_manager.text_to_audio(
+                    commander_gpt=self,
                     input_text=openai_result,
                     voice=self.elevenlabs_voice,
                     save_as_wave=True,
                     subdirectory="assets/audio",
                 )
-
-            self.state = "talking"
-            self.voice_color = self.character_text_color
-            self.subtitles = openai_result
-
-            # play the audio
-            if self.use_elevenlabs_voice:
-                print("play audio")
-                self.audio_manager.play_audio(
-                    file_path=elevenlabs_output,
-                    sleep_during_playback=True,
-                    delete_file=True,
-                    play_using_music=False,
-                )
             else:
+                # Using Azure TTS
+
+                # play the audio
                 print("play audio using azure tts")
                 self.voice_style = None
                 self.voice_image = None
+                # Azure TTS support more voice styles, so use those images if they exist
                 if openai_result.startswith("(") and ")" in openai_result:
                     for prefix in self.supported_prefixes:
                         if openai_result.startswith(prefix):
@@ -457,6 +447,11 @@ class CommanderGPTApp:
                                 voice_image_file_name, self.images_by_state.get("error")
                             )
                             openai_result = openai_result.removeprefix(prefix)
+                
+                self.state = "talking"
+                self.voice_color = self.character_text_color
+                self.subtitles = openai_result
+                
                 self.speechtotext_manager.texttospeech_from_text(
                     azure_voice_name=self.azure_voice_name,
                     azure_voice_style=self.voice_style,
