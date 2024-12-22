@@ -125,14 +125,16 @@ class AICharacter:
             for prefix, voice_style in self.supported_prefixes.items():
                 prefix_no_brackets = prefix.replace("(", "").replace(")", "")
                 file_name = f"{prefix_no_brackets}.png"
-                filepath = f"assets/images/{self.image_azure_voice_style_root_path}{file_name}"
+                filepath = (
+                    f"assets/images/{self.image_azure_voice_style_root_path}{file_name}"
+                )
                 if exists(filepath):
-                    self.images_by_state[prefix_no_brackets] = (
-                        filepath
-                    )
+                    self.images_by_state[prefix_no_brackets] = filepath
                 else:
-                    self.images_by_state[prefix_no_brackets] = self.images_by_state["talking"]
-                
+                    self.images_by_state[prefix_no_brackets] = self.images_by_state[
+                        "talking"
+                    ]
+
         # 1 for down, -1 for up
         self.image_offset_y = 0
         self.movement_direction = 1

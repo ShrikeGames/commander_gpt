@@ -241,12 +241,12 @@ class CommanderGPTApp:
         try:
             if file_path is None:
                 return
-            
+
             image = self.image_cache.get(file_path, None)
             if image is None:
                 image = PhotoImage(file=file_path)
                 self.image_cache[file_path] = image
-            
+
             self.canvas.create_image(
                 ai_character.image_xpos,
                 ai_character.image_ypos + offset_y,
@@ -300,7 +300,7 @@ class CommanderGPTApp:
                 ai_char.state = "idle"
                 ai_char.subtitles = None
                 ai_char.voice_color = ai_character.user_text_color
-            
+
             ai_character.state = "listening"
 
             # get mic result
