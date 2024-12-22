@@ -31,7 +31,7 @@ class CommanderGPTApp:
         self.init_libs()
 
         self.init_visuals(root)
-        self.init_ai_connections()
+        self.init_logic_threads()
         # start updating main thread
         self.update()
 
@@ -105,9 +105,7 @@ class CommanderGPTApp:
         # User's subtitles
         self.subtitles_config = self.system_config.get("subtitles", {})
         self.show_subtitles = self.subtitles_config.get("show_subtitles", False)
-        self.user_text_color = self.subtitles_config.get(
-            "user_text_color", False
-        )
+        self.user_text_color = self.subtitles_config.get("user_text_color", False)
         self.text_outline_color = self.subtitles_config.get("text_outline_color", False)
         self.text_outline_width = self.subtitles_config.get("text_outline_width", 2)
         self.font_size = self.subtitles_config.get("font_size", 32)
@@ -323,13 +321,14 @@ class CommanderGPTApp:
             ai_character.voice_style = None
             ai_character.voice_image = None
 
-    def init_ai_connections(self):
+    def init_logic_threads(self):
         """Initializes the main thread that will handle the connections to the AI endpoints.
 
         Starts new threads that will terminate if the main process terminates.
-        The first thread handles user input, sending to the various endpoints, and printing results.
-        The second thread just allows keyboard toggling of screenshots on or off.
-
+        The first thread handles user input.
+        The second thread handles the queue of characters who you activated to respond.
+        There is then a thread for each character who waits for their specific activation key to be pressed and add themselves to the queue.
+        The last thread just allows keyboard toggling of screenshots on or off.
         """
         self.character_activation_queue = []
         self.is_talking = False
@@ -364,6 +363,11 @@ class CommanderGPTApp:
         non_blocking_toggles.start()
 
     def handle_mic_input(self):
+        """Handles the mic input.
+        Wait for the mic activation key to be pressed.
+        Record the audio as text using Azure.
+        Stop recording when the activation key is pressed again.
+        """
         while True:
             if self.is_talking:
                 continue
@@ -393,14 +397,27 @@ class CommanderGPTApp:
             self.is_talking = False
 
     def activate_character(self, ai_character: AICharacter):
+        """Activates a given AI Character by adding them to the queue.
+        Will only add them to the queue if the user is not actively recording from the mic.
+
+        Args:
+            ai_character (AICharacter): The AI Character to activate.
+        """
         if self.is_talking:
             print(
                 f"[red]\nMic is active, cannot activate character. Stop talking by pressing {self.mic_activation_key} again."
             )
             return
+        # queue up the given character
         self.character_activation_queue.append(ai_character)
 
     def activate_next_character(self):
+        """Handles activating each character in the queue one at a time.
+        Characters are given the most recent prompt, and it is then sent to OpenAI to generate a response.
+        The character's response is then fed into the TTS configured for that character.
+        Lastly the returned audio is played.
+        It does this for each character in the queue, in the order they were added.
+        """
         while True:
             if len(self.character_activation_queue) > 0:
                 # first entry in the queue
@@ -523,7 +540,11 @@ class CommanderGPTApp:
             time.sleep(0.5)
 
     def handle_chatgpt(self, ai_character: AICharacter):
-        """Main logic loop for handling all interactions between the user and AI character."""
+        """Listens for the character's activation key is pressed and adds them to the queue to respond.
+
+        Args:
+            ai_character (AICharacter): The AI Character to monitor.
+        """
         print(
             f"[green]\nStarting the loop for {ai_character.name}, press num {ai_character.activation_key} to begin"
         )
