@@ -8,7 +8,7 @@ from lib.utils import (
     wait_until_key,
     write_json_file,
 )
-from lib.azure_speech_to_text import SpeechToTextManager
+from lib.azure_connections import AzureConnectionsManager
 from lib.eleven_labs import ElevenLabsManager
 from lib.ai_character import AICharacter
 
@@ -137,7 +137,7 @@ class CommanderGPTApp:
                 break
 
         # Used for transcribing the mic to text, and optionally for TTS as well if not using 11labs
-        self.speechtotext_manager = SpeechToTextManager(
+        self.speechtotext_manager = AzureConnectionsManager(
             azure_tts_key=self.token_config.get("azure_tts_key", None),
             azure_tts_region=self.token_config.get("azure_tts_region", None),
             speech_recognition_language=self.system_config.get(

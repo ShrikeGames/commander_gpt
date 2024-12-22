@@ -3,7 +3,7 @@ from .utils import wait_until_key
 from rich import print
 
 
-class SpeechToTextManager:
+class AzureConnectionsManager:
     """Class for managing Azure Speech-to-Text and Text-to-Speech operations."""
 
     azure_speechconfig = None
@@ -16,7 +16,7 @@ class SpeechToTextManager:
         azure_tts_region: str,
         speech_recognition_language: str = "en-US",
     ):
-        """Initializes the SpeechToTextManager with specified Azure subscription key and region.
+        """Initializes the AzureConnectionsManager with specified Azure subscription key and region.
 
         Args:
             azure_tts_key (str): The Azure Subscription Key to use for the Speech API.
