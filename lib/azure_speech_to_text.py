@@ -113,12 +113,12 @@ class SpeechToTextManager:
 
         return speech_synthesis_result
 
-    def speechtotext_from_mic_continuous(self, stop_key="8", ai_character=None):
+    def speechtotext_from_mic_continuous(self, stop_key="8", commander_gpt=None):
         """Performs continuous speech recognition using the microphone input.
 
         Args:
             stop_key (str, optional): The key to stop the speech recognition (default is "8").
-            ai_character (AICharacter, optional): The ai charater you are talking to.
+            commander_gpt (CommanderGPTApp, optional): The app to show in-progress subtitles as you talk.
 
         Returns:
             str: The recognized speech as a single concatenated string.
@@ -136,9 +136,9 @@ class SpeechToTextManager:
                 evt (speechsdk.SpeechRecognitionEventArgs): The event argument containing recognition data.
             """
             # print(f"RECOGNIZING: {evt.result.text}")
-            if ai_character:
+            if commander_gpt:
                 # tell it to show your in-progress message
-                ai_character.subtitles = evt.result.text
+                commander_gpt.subtitles = evt.result.text
 
         all_results = []
 

@@ -115,8 +115,7 @@ pip install -r requirements.txt
 - `elevenlabs_voice`: If using 11labs it will use this voice, must be one available to you in 11labs.
 - `azure_voice_name`: If using azure TTS this is the name of the voice it will use, it must be one available to you. Check the microsoft docs for options: https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support
 - `openai_model_name`: What OpenAI model to use, EG: gpt-4o.
-- `input_voice_start_button`: The key defined to start the microphone recording of your prompt. Must be a pynput KeyCode. For special keys this is like `Key.home` but for regular keys it will just be `a` or `1`. Does not recgonize numpad keys.
-- `input_voice_end_button`: The key defined to stop recording the microphone and to trigger sending the result to OpenAI. Same limitations as above.
+- `activation_key`: The key defined to queue up getting a response from this character through OpenAI. Must be a pynput KeyCode. For special keys this is like `Key.home` but for regular keys it will just be `a` or `1`. Does not recgonize numpad keys.
 - `monitor_to_screenshot`: When sending a screenshot this is the monitor id (EG: 1) to take the screenshot from. Everything on that monitor will be included.
 - `history`: A dictionary of keys containing configurations for the chat history.
   - EG:
@@ -178,7 +177,6 @@ pip install -r requirements.txt
 ```json
 "subtitles": {
     "show_subtitles": true,
-    "user_text_color": "white",
     "character_text_color": "pink",
     "text_outline_color": "black",
     "text_outline_width": 2,
@@ -189,7 +187,6 @@ pip install -r requirements.txt
 },
 ```
 - `show_subtitles`: If true then subtitles will show when you are recording a prompt from your mic, or when the character is responding. IF false, subtitles will not be displayed.
-- `user_text_color`: The text colour of your subtitles. Can be a named colour such as "white" or a hexcode of the format "#FFFFFF".
 - `character_text_color`: The text colour of the character's subtitles. Can be a named colour such as "white" or a hexcode of the format "#FFFFFF".
 - `text_outline_color`: The colour outline drawn around the subtitles. Can be a named colour such as "black" or a hexcode of the format "#000000".
 - `text_outline_width`: The width/strength of the outline around the subtitle's text.
@@ -207,8 +204,10 @@ This is a global config that has options not related to any one particular chara
 - `window_width`: The width of the app when it opens, in pixels.
 - `window_height`: The height of the app when it opens, in pixels.
 - `background_colour`: The background colour of the app, this allows you to chroma-key remove the background to have just the character and subtitles show up in OBS or other recording/video software. Can be a named colour such as "green" or a hexcode of the format "#00FF00".
-- `input_voice_start_button_with_screenshot`: The key defined to toggle sending a screenshot alongside your recorded prompt from the microphone. Same limitations as other key bindings.
+- `mic_activation_key`: The key defined to start or stop recording from your mic. Same limitations as other key bindings.
+- `enable_screenshot_toggle_key`: The key defined to toggle sending a screenshot alongside your recorded prompt from the microphone. Same limitations as other key bindings.
 - `speech_recognition_language`: Used for azure speech to text, this should match the language you are speaking.
+- `subtitles`: A dictionary of the same format that character_config.json uses, but for the user's subtitles when talking into the mic.
 
 3. Add your character's images to assets/images
 It must have one image for each possible state of the character, and mapped voice style. See above documentation on the character_config.json for details.
@@ -227,15 +226,19 @@ It must have one image for each possible state of the character, and mapped voic
 ```
 .venv/bin/python3 commander_gpt.py commander alien
 ```
-5. Press the configured key to start recording from your mic (defined in character_config.json)
+5. Press the configured key to start recording from your mic (defined in system_config.json)
 6. Talk as much as you want
-7. If you want a screenshot to be included with your message then you can toggle that on or off with SHIFT (or button defined in character_config.json)
+7. If you want a screenshot to be included with your message then you can toggle that on or off with the button defined in system_config.json
 8. Wait a second or two after you are done talking to allow the speech-to-text to finish
-9. Press the configured key (defined in character_config.json) to send the transcribed audio to ChatGPT via OpenAI
-10. when a response from OpenAI is returned it will process it and send it to either 11labs or azure to convert to audio
-11. It will now play the audio of the character talking and show the image of the character.
-12. When the character is done talking you can return to step 5 and repeat to continue the conversation.
-14. When satisfied with the results you can capture the app's window in OBS or other software and add a chroma-key filter to remove the background.
+10. Press the same key again to stop recording from your mic.
+11. Press the configured key (defined in character_config.json) to send the transcribed audio to ChatGPT via OpenAI
+  - Have each individual character will wait for their own activation key (in their character_config.json entry) and add themselves to a queue
+  - This avoids characters talking over each other, they will wait their turn
+  - This will allow having one mic input button to get input, then ask from any character you want to respond afterwards
+12. when a response from OpenAI is returned it will process it and send it to either 11labs or azure to convert to audio
+13. It will now play the audio of the character talking and show the image of the character.
+14. When all of the characters are done talking you can return to step 5 and repeat to continue the conversation, or activate other characters to talk again.
+15. When satisfied with the results you can capture the app's window in OBS or other software and add a chroma-key filter to remove the background.
 
 ## Troubleshooting
 DO NOT RUN AS SUDO IF ON LINUX.
@@ -252,11 +255,6 @@ DO NOT RUN AS SUDO IF ON LINUX.
 - Improve the animation effect.
   - Framerate independent (using time delta) sin/cos instead of linear
   - Configurable speed
-- Remove waiting for mic from individual threads and centralize it
-  - Have each individual character thread wait for their activation key (currently end mic input key) and add themselves to a queue
-  - This will let us avoid double mic inputs if you want to talk to everyone
-  - This will avoid characters talking over each other, they will wait their turn
-  - This will allow having one mic input button to get input, then ask from any character you want to respond afterwards
 - Investigate issue where openAI returned some characters that broke the Azure TTS (program still ran but it did not read it aloud)
 - (Maybe) Would be nice to support full animations or 3D models easily
   - Could look at azure's virtual assistants as one option

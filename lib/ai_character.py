@@ -52,11 +52,8 @@ class AICharacter:
             exit("No elevenlabs voice was provided.")
 
         # key bindings configs
-        # determine what keys we'll listen for to start and stop mic recording
-        self.mic_start_key = self.character_info.get(
-            "input_voice_start_button", "Key.home"
-        )
-        self.mic_stop_key = self.character_info.get("input_voice_end_button", "Key.end")
+        # determine what keys we'll listen for responding to the most recent mic input
+        self.activation_key = self.character_info.get("activation_key", "Key.home")
 
         # screenshot configs
         self.monitor_to_screenshot = self.character_info.get(
@@ -85,7 +82,6 @@ class AICharacter:
         # subtitles configs
         self.subtitles_config = self.visuals_config.get("subtitles", {})
         self.show_subtitles = self.subtitles_config.get("show_subtitles", False)
-        self.user_text_color = self.subtitles_config.get("user_text_color", False)
         self.character_text_color = self.subtitles_config.get(
             "character_text_color", False
         )

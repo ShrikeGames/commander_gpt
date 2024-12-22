@@ -6,8 +6,7 @@
         "elevenlabs_voice": "Alice",
         "azure_voice_name": "en-US-SerenaMultilingualNeural",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "Key.home",
-        "input_voice_end_button": "Key.end",
+        "activation_key": "Key.end",
         "monitor_to_screenshot": 3,
         "history": {
             "max_history_length_messages": 100,
@@ -53,7 +52,6 @@
             "hide_character_when_idle": false,
             "subtitles": {
                 "show_subtitles": true,
-                "user_text_color": "white",
                 "character_text_color": "pink",
                 "text_outline_color": "black",
                 "text_outline_width": 2,
@@ -121,8 +119,7 @@
         "elevenlabs_voice": "Alice",
         "azure_voice_name": "en-US-SerenaMultilingualNeural",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "Key.home",
-        "input_voice_end_button": "Key.end",
+        "activation_key": "Key.end",
         "monitor_to_screenshot": 3,
         "history": {
             "max_history_length_messages": 100,
@@ -170,7 +167,6 @@
             "hide_character_when_idle": false,
             "subtitles": {
                 "show_subtitles": true,
-                "user_text_color": "white",
                 "character_text_color": "pink",
                 "text_outline_color": "black",
                 "text_outline_width": 2,
@@ -222,8 +218,7 @@
         "elevenlabs_voice": "",
         "azure_voice_name": "en-US-DavisNeural",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "-",
-        "input_voice_end_button": "Key.end",
+        "activation_key": "Key.end",
         "monitor_to_screenshot": 3,
         "history": {
             "max_history_length_messages": 100,
@@ -261,7 +256,6 @@
             "image_ypos": 180,
             "subtitles": {
                 "show_subtitles": true,
-                "user_text_color": "white",
                 "character_text_color": "#000077",
                 "text_outline_color": "black",
                 "text_outline_width": 2,
@@ -312,8 +306,7 @@
         "elevenlabs_voice": "",
         "azure_voice_name": "en-US-DavisNeural",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "7",
-        "input_voice_end_button": "Key.end",
+        "activation_key": "7",
         "monitor_to_screenshot": 3,
         "history": {
             "max_history_length_messages": 100,
@@ -351,7 +344,6 @@
             "image_ypos": 360,
             "subtitles": {
                 "show_subtitles": true,
-                "user_text_color": "white",
                 "character_text_color": "#FF0000",
                 "text_outline_color": "black",
                 "text_outline_width": 2,
@@ -407,8 +399,7 @@
         "elevenlabs_voice": "",
         "azure_voice_name": "en-US-JaneNeural",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "8",
-        "input_voice_end_button": "Key.end",
+        "activation_key": "8",
         "monitor_to_screenshot": 3,
         "history": {
             "max_history_length_messages": 100,
@@ -446,7 +437,6 @@
             "image_ypos": 360,
             "subtitles": {
                 "show_subtitles": true,
-                "user_text_color": "white",
                 "character_text_color": "#0000FF",
                 "text_outline_color": "black",
                 "text_outline_width": 2,
@@ -504,8 +494,7 @@
         "elevenlabs_voice": "",
         "azure_voice_name": "en-US-JasonNeural",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "9",
-        "input_voice_end_button": "Key.end",
+        "activation_key": "9",
         "monitor_to_screenshot": 3,
         "history": {
             "max_history_length_messages": 100,
@@ -543,7 +532,6 @@
             "image_ypos": 360,
             "subtitles": {
                 "show_subtitles": true,
-                "user_text_color": "white",
                 "character_text_color": "#FF9900",
                 "text_outline_color": "black",
                 "text_outline_width": 2,
