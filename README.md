@@ -27,6 +27,7 @@ https://github.com/user-attachments/assets/b94c55be-72be-4fcd-8d22-8dc8c9cb4310
 
 ### Multiple Character Example
 3 DND Characters converse with each other about their plans.
+
 https://github.com/user-attachments/assets/36e2c841-45f1-4e54-b263-1eb7bf0c89f8
 
 ### YouTube
