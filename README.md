@@ -16,6 +16,7 @@ Key differences:
 - Documentation ;P
 - Allows toggling features on or off, including using Azure TTS instead of 11labs.
 - Easier multi-lingual support (EG: English and Japanese at the same time).
+  - EG: If you are speaking Japanese change `speech_recognition_language` in the `system_configs.json` to `ja-JP`.
 - Can allow arbitrary amounts of characters to talk together, and with you, just be providing their configuration names as arguments.
   - So if you want them to talk to each other, play DND, have an entire council of advisors, etc you can
   - Or just have a regular 1-on-1 conversation.
@@ -249,6 +250,13 @@ DO NOT RUN AS SUDO IF ON LINUX.
 ## TODOs
 - (Maybe) Make the animation match the audio playback's pace
 - Improve the animation effect.
+  - Framerate independent (using time delta) sin/cos instead of linear
+  - Configurable speed
+- Remove waiting for mic from individual threads and centralize it
+  - Have each individual character thread wait for their activation key (currently end mic input key) and add themselves to a queue
+  - This will let us avoid double mic inputs if you want to talk to everyone
+  - This will avoid characters talking over each other, they will wait their turn
+  - This will allow having one mic input button to get input, then ask from any character you want to respond afterwards
 - Investigate issue where openAI returned some characters that broke the Azure TTS (program still ran but it did not read it aloud)
 - (Maybe) Would be nice to support full animations or 3D models easily
   - Could look at azure's virtual assistants as one option
