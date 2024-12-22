@@ -365,6 +365,8 @@ class CommanderGPTApp:
 
     def handle_mic_input(self):
         while True:
+            if self.is_talking:
+                continue
             print(
                 f"[green]\nWaiting. Press {self.mic_activation_key} to start talking or the activation key for any character to hear them talk."
             )

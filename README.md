@@ -260,6 +260,7 @@ DO NOT RUN AS SUDO IF ON LINUX.
 - Improve the animation effect.
   - Framerate independent (using time delta) sin/cos instead of linear
   - Configurable speed
+- Customizable font
 - Investigate issue where openAI returned some characters that broke the Azure TTS (program still ran but it did not read it aloud)
 - (Maybe) Would be nice to support full animations or 3D models easily
   - Could look at azure's virtual assistants as one option

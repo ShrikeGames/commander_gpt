@@ -344,7 +344,7 @@
             "image_ypos": 360,
             "subtitles": {
                 "show_subtitles": true,
-                "character_text_color": "#FF0000",
+                "character_text_color": "#660000",
                 "text_outline_color": "black",
                 "text_outline_width": 2,
                 "font_size": 26,
@@ -437,7 +437,7 @@
             "image_ypos": 360,
             "subtitles": {
                 "show_subtitles": true,
-                "character_text_color": "#0000FF",
+                "character_text_color": "#000066",
                 "text_outline_color": "black",
                 "text_outline_width": 2,
                 "font_size": 26,
@@ -532,7 +532,7 @@
             "image_ypos": 360,
             "subtitles": {
                 "show_subtitles": true,
-                "character_text_color": "#FF9900",
+                "character_text_color": "#663300",
                 "text_outline_color": "black",
                 "text_outline_width": 2,
                 "font_size": 26,
