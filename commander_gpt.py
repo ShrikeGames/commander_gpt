@@ -14,6 +14,7 @@ from lib.ai_character import AICharacter
 
 from rich import print
 import time
+import math
 
 
 class CommanderGPTApp:
@@ -168,10 +169,13 @@ class CommanderGPTApp:
         )
         self.canvas.pack()
 
-    def update_visuals(self):
+    def update_visuals(self, time: int):
         """Updates the visuals on the canvas.
 
         Clears the canvas, updates the character image and the subtitles based on the current state, and applies the necessary offsets for movement.
+
+        Args:
+            time (int): The time given in seconds, always increases.
         """
         self.canvas.delete("all")
         # type hint
@@ -184,20 +188,18 @@ class CommanderGPTApp:
                 or not ai_character.hide_character_when_idle
             ):
                 if ai_character.state == "talking":
-                    ai_character.image_offset_y += (
-                        ai_character.movement_direction * ai_character.movement_speed
+                    offset_y = (
+                        ai_character.image_offset_y
+                        + ai_character.max_amplitude
+                        + (
+                            math.sin(time * ai_character.movement_speed)
+                            * ai_character.max_amplitude
+                        )
                     )
-                    # Reverse direction when reaching top or bottom
-                    if (
-                        ai_character.image_offset_y >= ai_character.image_max_offset
-                        or ai_character.image_offset_y <= ai_character.image_min_offset
-                    ):
-                        ai_character.movement_direction *= -1
-
                     character_image = ai_character.voice_image
                     self.show_image(
                         character_image,
-                        offset_y=ai_character.image_offset_y,
+                        offset_y=offset_y,
                         ai_character=ai_character,
                     )
 
@@ -572,7 +574,11 @@ class CommanderGPTApp:
 
         This method calls the update_visuals method to refresh the display. It runs in a loop to keep updating until the app is closed.
         """
-        self.update_visuals()
+        # determine how much time has past since the last update
+        now = time.monotonic()
+        # update visuals telling it how long it's been since an update
+        self.update_visuals(time=now)
+
         # Schedule the next update (every 10ms)
         self.root.after(10, self.update)
 

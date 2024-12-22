@@ -133,10 +133,9 @@ class AICharacter:
 
         # 1 for down, -1 for up
         self.image_offset_y = 0
-        self.movement_direction = 1
-        self.movement_speed = 2
-        self.image_max_offset = 9
-        self.image_min_offset = 0
+        self.max_amplitude = self.visuals_config.get("max_amplitude", 5)
+        self.max_movement_speed = self.visuals_config.get("move_speed", 5)
+        self.movement_speed = self.max_movement_speed
 
         # global state
         self.state = "idle"
