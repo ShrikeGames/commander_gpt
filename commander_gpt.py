@@ -239,11 +239,14 @@ class CommanderGPTApp:
             Exception: If the image cannot be loaded, an error message is printed.
         """
         try:
+            if file_path is None:
+                return
+            
             image = self.image_cache.get(file_path, None)
             if image is None:
                 image = PhotoImage(file=file_path)
                 self.image_cache[file_path] = image
-
+            
             self.canvas.create_image(
                 ai_character.image_xpos,
                 ai_character.image_ypos + offset_y,
@@ -362,7 +365,8 @@ class CommanderGPTApp:
                 # play the audio
                 print("play audio using azure tts")
                 ai_character.voice_style = None
-                ai_character.voice_image = None
+                # generic talking by default
+                ai_character.voice_image = ai_character.images_by_state.get("talking")
                 # Azure TTS support more voice styles, so use those images if they exist
                 if openai_result.startswith("(") and ")" in openai_result:
                     for prefix in ai_character.supported_prefixes:
