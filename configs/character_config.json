@@ -6,8 +6,8 @@
         "elevenlabs_voice": "Alice",
         "azure_voice_name": "en-US-SerenaMultilingualNeural",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "8",
-        "input_voice_end_button": "8",
+        "input_voice_start_button": "Key.home",
+        "input_voice_end_button": "Key.end",
         "monitor_to_screenshot": 3,
         "history": {
             "max_history_length_messages": 100,
@@ -121,8 +121,8 @@
         "elevenlabs_voice": "Alice",
         "azure_voice_name": "en-US-SerenaMultilingualNeural",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "8",
-        "input_voice_end_button": "8",
+        "input_voice_start_button": "Key.home",
+        "input_voice_end_button": "Key.end",
         "monitor_to_screenshot": 3,
         "history": {
             "max_history_length_messages": 100,
@@ -131,6 +131,7 @@
         "visuals": {
             "supported_prefixes": {
                 "(happy)": "friendly",
+                "(嬉しい)": "friendly",
                 "(empathetic)": "empathetic",
                 "(excited)" : "excited",
                 "(興奮)": "excited",
@@ -220,7 +221,7 @@
         "elevenlabs_voice": "",
         "azure_voice_name": "en-US-DavisNeural",
         "openai_model_name": "gpt-4o-mini",
-        "input_voice_start_button": "9",
+        "input_voice_start_button": "-",
         "input_voice_end_button": "Key.end",
         "monitor_to_screenshot": 3,
         "history": {
