@@ -16,7 +16,7 @@ from rich import print
 import time
 import math
 import random
-
+import re
 
 class CommanderGPTApp:
     def __init__(self, root, args):
@@ -72,7 +72,6 @@ class CommanderGPTApp:
 
         # create characters for each one provided in args
         self.ai_characters = []
-        self.last_random_triggered_character = None
         for i in range(1, len(args)):
             # get character based on name from command line args
             character_config_key = args[i]
@@ -531,64 +530,33 @@ class CommanderGPTApp:
                     for other_ai_character in ai_character.other_ai_characters:
                         other_ai_character.state = "listening"
                         other_ai_character.subtitles = None
-
-                    ai_character.voice_color = ai_character.character_text_color
-                    ai_character.subtitles = openai_result
+                    
                     # there are other characters we could potentially trigger
+                    trigger_pattern = re.compile("\[trigger\](.*?)\[\/trigger\]")
                     if (
                         openai_result is not None
-                        and ai_character.auto_trigger_other_characters is not None
                         and ai_character.other_ai_characters is not None
                     ):
-                        # we'll keep track of whatever character was LAST mentioned to trigger them
-                        biggest_index = -1
-                        character_to_trigger = None
-                        for (
-                            auto_trigger_condition
-                        ) in ai_character.auto_trigger_other_characters:
-                            # text that must be found to trigger
-                            text = auto_trigger_condition.get("text", None)
-                            # search for the last instance of the text
-                            index = -1 if text is None else openai_result.rfind(text)
-                            character_name = auto_trigger_condition.get(
-                                "character_name", None
-                            )
-                            # either we don't have a match condition, or it's a match later than the current match
-                            if text is not None and index > biggest_index:
-                                biggest_index = index
-                                # found the trigger so get the character we need to activate
+                        # find if the AI wants to trigger any other characters
+                        find_triggers = re.findall(trigger_pattern, openai_result)
+                        if len(find_triggers) > 0:
+                            for character_name in find_triggers:
+                                # as long as the name is valid
                                 if character_name is not None:
                                     # trigger the character specified based on their name
                                     for (
                                         other_ai_character
                                     ) in ai_character.other_ai_characters:
+                                        # if the name matches another character in the scene
                                         if other_ai_character.name == character_name:
-                                            # add to list
-                                            
-                                            character_to_trigger = other_ai_character
+                                            # add them to the queue to talk next
+                                            self.activate_character(other_ai_character)
                                             break
-                                else:
-                                    # hit text trigger but no specified character, so pick someone else randomly
-                                    character_to_trigger = random.choice(ai_character.other_ai_characters)
-                                    self.last_random_triggered_character = character_to_trigger
-                            elif biggest_index < 0 and character_to_trigger is None and text is None and character_name is not None:
-                                # no text match needed but we have a specific character to trigger
-                                # trigger the character specified based on their name
-                                for (
-                                    other_ai_character
-                                ) in ai_character.other_ai_characters:
-                                    if other_ai_character.name == character_name:
-                                        # add to list
-                                        character_to_trigger = other_ai_character
-                                        break
-                            elif biggest_index < 0 and character_to_trigger is None and text is None and character_name is None:
-                                # no text prompt and no character specified
-                                # trigger random other character
-                                character_to_trigger = random.choice(ai_character.other_ai_characters)
-                            
-                        if character_to_trigger is not None:
-                            print(f"Mentioned {character_to_trigger.name} last, so will queue them up to talk next.")
-                            self.activate_character(character_to_trigger)
+                            # Remove all instances of [trigger]NAME[/trigger]
+                            openai_result = re.sub(trigger_pattern, '', openai_result)
+                    
+                    ai_character.voice_color = ai_character.character_text_color
+                    ai_character.subtitles = openai_result
 
                     self.speechtotext_manager.texttospeech_from_text(
                         azure_voice_name=ai_character.azure_voice_name,

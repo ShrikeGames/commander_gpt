@@ -385,6 +385,7 @@
             "15) Ask the DM for more information when you need it.",
             "16) You are very rash.",
             "17) Start your response with something similar to \"I try to\" or \"I attempt to\" (but vary the termonology to keep it interesting) if attempting an action that isn't guaranteed to succeed.",
+            "18) End your response with \n[trigger]NAME[/trigger] where NAME is replaced with the character's name you are talking to.. Otherwise end your response with \n[trigger]NoiR[/trigger]. It must be on a new line.",
             "To express your mood you may use the following prefixes for your responses:",
             "(angry) When you are angry or mad",
             "(cheerful) When you are cheerful",
@@ -396,13 +397,7 @@
             "(worried) When you are worried",
             "(terrified) when you are terrified, frightened, or scared",
             "(whispering) When you want to be quiet, or whisper"]
-        },
-        "auto_trigger_other_characters":[
-            {
-                "text": null,
-                "character_name": "NoiR"
-            }
-        ]
+        }
         
     },
     "dnd2": {
@@ -494,6 +489,7 @@
             "17) Ask the DM for more information when you're confused.",
             "18) Your responses should randomly mention heretics.",
             "19) Start your response with something similar to \"I try to\" (but vary the termonology) if attempting an action that isn't guaranteed to succeed.",
+            "20) End your response with \n[trigger]NAME[/trigger] where NAME is replaced with the character's name you are talking to. Otherwise end your response with \n[trigger]NoiR[/trigger]. It must be on a new line.",
             "To express your mood you may use the following prefixes for your responses:",
             "(angry) When you are angry or mad",
             "(cheerful) When you are cheerful",
@@ -505,13 +501,7 @@
             "(worried) When you are worried",
             "(terrified) when you are terrified, frightened, or scared",
             "(whispering) When you want to be quiet, or whisper"]
-        },
-        "auto_trigger_other_characters":[
-            {
-                "text": null,
-                "character_name": "NoiR"
-            }
-        ]
+        }
         
     },
     "dnd3": {
@@ -602,6 +592,7 @@
             "17) Ask the DM for more information when something is not clear.",
             "18) You are very selflish.",
             "19) Start your response with something similar to \"I try to\" (but vary the termonology) if attempting an action that isn't guaranteed to succeed.",
+            "20) End your response with \n[trigger]NAME[/trigger] where NAME is replaced with the character's name you are talking to. Otherwise end your response with \n[trigger]NoiR[/trigger]. It must be on a new line.",
             "To express your mood you may use the following prefixes for your responses:",
             "(angry) When you are angry or mad",
             "(cheerful) When you are cheerful",
@@ -613,14 +604,7 @@
             "(worried) When you are worried",
             "(terrified) when you are terrified, frightened, or scared",
             "(whispering) When you want to be quiet, or whisper"]
-        },
-        "auto_trigger_other_characters":[
-            {
-                "text": null,
-                "character_name": "NoiR"
-            }
-            
-        ]
+        }
     },
     "dndgm": {
         "name": "NoiR",
@@ -733,6 +717,9 @@
             "19) When the party completes a challenge, defeats a foe, or solves a puzzle then you should award them with XP. When they get enough XP they can level up and gain new abilities that make sense for their level.",
             "20) If a party member hasn't talked in a while ask what they would like to do.",
             "21) Don't repeat what the party members said when responding.",
+            "22) Never include dialogue of the party members talking in your description. Let them talk for themselves.",
+            "23) Favour asking characters what they do or say instead of assuming.",
+            "24) End your response with \n[trigger]NAME[/trigger] where NAME is replaced with the character's name you are talking to.",
             "To express your mood you may use the following prefixes for your responses (in English only):",
             "(happy) When you are happy",
             "(empathetic) When you are empathetic",
@@ -745,25 +732,7 @@
             "(smug) when you are smug",
             "(serious) When you want to be serious",
             "(shy) When you are quiet or shy"]
-        },
-        "auto_trigger_other_characters":[
-            {
-                "text": "Mayo",
-                "character_name": "Mayo"
-            },
-            {
-                "text": "Bram",
-                "character_name": "Bram"
-            },
-            {
-                "text": "Korrin",
-                "character_name": "Korrin"
-            },
-            {
-                "text": null,
-                "character_name": null
-            }
-        ]
+        }
         
     }
 
