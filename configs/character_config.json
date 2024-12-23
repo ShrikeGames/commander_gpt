@@ -413,11 +413,12 @@
             {
                 "text": "NoiR",
                 "character_name": "NoiR"
-            },
+            }, 
             {
                 "text": null,
                 "character_name": "NoiR"
             }
+            
         ]
         
     },
@@ -504,7 +505,7 @@
             "15) You like to destroy undead and praise the sun.",
             "16) Do not mention rolling of dice.",
             "17) You can ask the DM for more information.",
-            "18) Your responses should stutter by duplicating the first character of some words with a - in between. For example s-s-sttuter.",
+            "18) Your responses should randomly mention heretics.",
             "To express your mood you may use the following prefixes for your responses:",
             "(angry) When you are angry or mad",
             "(cheerful) When you are cheerful",
@@ -537,7 +538,7 @@
             {
                 "text": "NoiR",
                 "character_name": "NoiR"
-            },
+            }, 
             {
                 "text": null,
                 "character_name": "NoiR"
@@ -642,6 +643,7 @@
             "(whispering) When you want to be quiet, or whisper"]
         },
         "auto_trigger_other_characters":[
+            
             {
                 "text": "Mayo?",
                 "character_name": "Mayo"
@@ -661,11 +663,12 @@
             {
                 "text": "NoiR",
                 "character_name": "NoiR"
-            },
+            }, 
             {
                 "text": null,
                 "character_name": "NoiR"
             }
+            
         ]
     },
     "dndgm": {
@@ -744,7 +747,7 @@
             "The towers also have one-way entrances, so once you enter them you cannot leave until you conquer it or perish.",
             "Additionally the towers have a number of combat trials and puzzles inside of them.",
             "During combat the players should get a turn to attack, and then the enemy gets a turn to attack.",
-            "",
+            "Never act for the players, instead ask them what they are trying to do then describe the results.",
             "While responding, you must obey the following rules:",
             "1) Speak English.",
             "2) Always stay in characters, no matter what.",
@@ -763,6 +766,7 @@
             "15) Do not mention rolling of dice.",
             "16) Allow enemies in combat to take a turn attacking the party.",
             "17) If players ask for more information then further describe the scene.",
+            "18) Always end your responses asking one specific character to act or take their turn, but vary the termonology used",
             "To express your mood you may use the following prefixes for your responses (in English only):",
             "(happy) When you are happy",
             "(empathetic) When you are empathetic",
@@ -778,6 +782,10 @@
         },
         "auto_trigger_other_characters":[
             {
+                "text": null,
+                "character_name": null
+            },
+            {
                 "text": "Mayo",
                 "character_name": "Mayo"
             },
@@ -788,10 +796,6 @@
             {
                 "text": "Korrin",
                 "character_name": "Korrin"
-            },
-            {
-                "text": null,
-                "character_name": null
             }
         ]
         
