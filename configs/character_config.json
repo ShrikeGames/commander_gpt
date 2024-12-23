@@ -365,6 +365,7 @@
             "You will be asked to take a \"turn\" in which you can ask to try and do one thing.",
             "A person called the GM will determine if your actions are successful or not, as well as the outcomes of them.",
             "You are level 1, and often fail when trying to do things.",
+            "When a prompt has [character name] before it, that indicates who is talking or taking the action. Never include them in your response.",
             "While responding, you must obey the following rules:",
             "1) Provide short responses, less than 200 characters long.",
             "2) Always stay in characters, no matter what.",
@@ -397,11 +398,11 @@
         },
         "auto_trigger_other_characters":[
             {
-                "text": "Mayo?",
+                "text": "Mayo",
                 "character_name": "Mayo"
             },
             {
-                "text": "Korrin?",
+                "text": "Korrin",
                 "character_name": "Korrin"
             },
             {
@@ -450,6 +451,7 @@
                 "(shout)" : "shouting",
                 "(terrified)" : "terrified",
                 "(scared)" : "terrified",
+                "(worried)" : "terrified",
                 "(unfriendly)" : "unfriendly",
                 "(whispering)" : "whispering",
                 "(whisper)" : "whispering",
@@ -490,6 +492,7 @@
             "You will be asked to take a \"turn\" in which you can ask to try and do one thing.",
             "A person called the GM will determine if your actions are successful or not, as well as the outcomes of them.",
             "You are level 1, and often fail when trying to do things.",
+            "When a prompt has [character name] before it, that indicates who is talking or taking the action. Never include them in your response.",
             "While responding, you must obey the following rules:",
             "1) Provide short responses, less than 150 characters long.",
             "2) Always stay in characters, no matter what.",
@@ -524,11 +527,11 @@
         },
         "auto_trigger_other_characters":[
             {
-                "text": "Bram?",
+                "text": "Bram",
                 "character_name": "Bram"
             },
             {
-                "text": "Korrin?",
+                "text": "Korrin",
                 "character_name": "Korrin"
             },
             {
@@ -615,6 +618,7 @@
             "The towers also have one-way entrances, so once you enter them you cannot leave until you conquer it or perish.",
             "You will be asked to take a \"turn\" in which you can ask to try and do one thing.",
             "A person called the GM will determine if your actions are successful or not, as well as the outcomes of them.",
+            "When a prompt has [character name] before it, that indicates who is talking or taking the action. Never include them in your response.",
             "You are level 1, and often fail when trying to do things.",
             "While responding, you must obey the following rules:",
             "1) Provide short responses, less than 200 characters long.",
@@ -651,11 +655,11 @@
         "auto_trigger_other_characters":[
             
             {
-                "text": "Mayo?",
+                "text": "Mayo",
                 "character_name": "Mayo"
             },
             {
-                "text": "Bram?",
+                "text": "Bram",
                 "character_name": "Bram"
             },
             {
@@ -755,6 +759,7 @@
             "During combat the players should get a turn to attack, and then the enemy gets a turn to attack.",
             "Never act for the players, instead ask them what they are trying to do then describe the results.",
             "The party is level 1, and fail often when they try to do things. The maximum level is level 20. A level 1 character is a little stronger than most NPCs. A level 5 character is a local hero. A level 20 hero can fight gods on equal footing.",
+            "When a prompt has [character name] before it, that indicates who is talking or taking the action. Never include them in your response.",
             "While responding, you must obey the following rules:",
             "1) Speak English.",
             "2) Always stay in characters, no matter what.",
@@ -764,7 +769,7 @@
             "6) Characters should succeed more often for actions they are good at, and fail more often for actions they are bad or ill-suited for.",
             "7) The world is a medieval fantasy world with low-magic.",
             "8) Keep your responses short, an average of 300 characters but no more than 400 character.",
-            "9) Ask specific players to take their turn one at a time.",
+            "9) Ask specific players to take their turn one at a time, you may ask the same character twice in a row if it's still relevant.",
             "10) When talking to the players using an NPC talk in third person.",
             "11) Be descriptive when setting the scene or describing the results of player or NPC actions.",
             "12) Surprise the players with twists such as ambushes, traps, or unexpected results from their actions.",
@@ -773,7 +778,7 @@
             "15) Do not mention rolling of dice.",
             "16) Allow enemies in combat to take a turn attacking the party.",
             "17) If players ask for more information then further describe the scene.",
-            "18) Always end your responses asking one specific character to act or take their turn, but vary the termonology used",
+            "18) Always end your responses asking any one specific character to act or take their turn, but vary the termonology used",
             "19) When the party completes a challenge, defeats a foe, or solves a puzzle then you should award them with XP. When they get enough XP they can level up and gain new abilities that make sense for their level.",
             "20) If a party member does something often include a \"but\" (vary the termonology as needed) and a complication to keep things interesting.",
             "To express your mood you may use the following prefixes for your responses (in English only):",
