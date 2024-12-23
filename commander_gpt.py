@@ -548,7 +548,8 @@ class CommanderGPTApp:
                         ) in ai_character.auto_trigger_other_characters:
                             # text that must be found to trigger
                             text = auto_trigger_condition.get("text", None)
-                            index = -1 if text is None else openai_result.find(text)
+                            # search for the last instance of the text
+                            index = -1 if text is None else openai_result.rfind(text)
                             character_name = auto_trigger_condition.get(
                                 "character_name", None
                             )
