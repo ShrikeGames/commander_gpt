@@ -74,7 +74,7 @@ class OpenAiManager:
         # share what we said to the other AI's as well
         for other_ai_character in other_ai_characters:
             other_ai_character.openai_manager.chat_history.append(
-                {"role": "user", "content": prompt_for_our_history}
+                {"role": "system", "content": prompt_for_our_history}
             )
 
         # Trim the chat history if it exceeds the maximum length
@@ -101,7 +101,7 @@ class OpenAiManager:
         for other_ai_character in other_ai_characters:
             other_ai_character.openai_manager.chat_history.append(
                 {
-                    "role": "user",
+                    "role": "system",
                     "content": f"\n[{ai_character.name}]\n{completion.choices[0].message.content}",
                 }
             )
