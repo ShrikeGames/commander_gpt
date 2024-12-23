@@ -31,8 +31,12 @@ https://github.com/user-attachments/assets/b94c55be-72be-4fcd-8d22-8dc8c9cb4310
 https://github.com/user-attachments/assets/36e2c841-45f1-4e54-b263-1eb7bf0c89f8
 
 ### YouTube
+You can check out what happens when 4 AIs play DND together (1 DM and 3 as Players). Recorded on 2024-12-22.
+https://www.youtube.com/watch?v=3dd3WLQucZg
+
 You can check out this AI (as of 2024-12-19, now outdated) making all of the decisions in XCOM Enemy Unknown here:
 https://www.youtube.com/watch?v=x0U_EnhkBwI
+
 
 ## Setup:
 It is suggested to use a virtual environment.
