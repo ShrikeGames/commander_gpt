@@ -73,7 +73,7 @@ class AzureConnectionsManager:
             None: Prints errors to console if synthesis fails.
         """
         if len(text_to_speak) == 0:
-            print("This message was empty")
+            print("[yellow]\nThis message was empty")
             return
 
         voice_style = azure_voice_style
@@ -189,5 +189,5 @@ class AzureConnectionsManager:
             return None
 
         final_result = " ".join(all_results).strip()
-        print(f"[green]\n\nHere’s the result we got!\n\n{final_result}\n\n")
+        print(f"[green]\nHere’s the result we got!\n> {final_result}\n")
         return final_result

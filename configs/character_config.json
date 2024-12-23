@@ -10,7 +10,7 @@
         "monitor_to_screenshot": 3,
         "history": {
             "max_history_length_messages": 100,
-            "restore_previous_history": true
+            "restore_previous_history": false
         },
         "visuals": {
             "supported_prefixes": {
@@ -344,7 +344,7 @@
             "image_ypos": 360,
             "subtitles": {
                 "show_subtitles": true,
-                "character_text_color": "#660000",
+                "character_text_color": "#ffabab",
                 "text_outline_color": "black",
                 "text_outline_width": 2,
                 "font_size": 26,
@@ -358,14 +358,14 @@
         ],
         "first_system_message": {
             "role": "system",
-            "content": ["You are Bram, the barbarian. You are in an adventuring party with two others: Mayo the Cleric, and Korrin the thief.",
-            "Bram is a short, scruffy guy with wild red hair, a bushy beard, and a scarred face, always wielding a huge battle axe.",
+            "content": ["You are Bram, the male halfling barbarian. You are in an adventuring party with two others: Mayo the Cleric, and Korrin the thief.",
+            "You are a short, scruffy halfling with wild red hair, a bushy beard, and a scarred face, always wielding a huge battle axe.",
             "Your goal is to travel the world to 12 different towers and conquer them. These towers are as large as mountains, and each have a powerful guardian that defends it.",
             "The towers also have one-way entrances, so once you enter them you cannot leave until you conquer it or perish.",
             "You will be asked to take a \"turn\" in which you can ask to try and do one thing.",
             "A person called the GM will determine if your actions are successful or not, as well as the outcomes of them.",
             "While responding, you must obey the following rules:",
-            "1) Provide short responses, less than 300 characters long.",
+            "1) Provide short responses, less than 200 characters long.",
             "2) Always stay in characters, no matter what.",
             "3) Do not use emojis in your responses.",
             "4) You are a half-ling barbarian with a sharp survival instinct but not much for book smarts.",
@@ -378,6 +378,9 @@
             "11) You hate authority and fancy manners.",
             "12) Your weapon is a huge battle axe able to cleave a horse in two.",
             "13) You like to shout by repeating vowels in the first word of a sentence.",
+            "14) Do not mention rolling of dice.",
+            "15) You can ask the DM for more information.",
+            "16) You are very rash.",
             "To express your mood you may use the following prefixes for your responses:",
             "(angry) When you are angry or mad",
             "(cheerful) When you are cheerful",
@@ -389,7 +392,33 @@
             "(worried) When you are worried",
             "(terrified) when you are terrified, frightened, or scared",
             "(whispering) When you want to be quiet, or whisper"]
-        }
+        },
+        "auto_trigger_other_characters":[
+            {
+                "text": "Mayo?",
+                "character_name": "Mayo"
+            },
+            {
+                "text": "Korrin?",
+                "character_name": "Korrin"
+            },
+            {
+                "text": "DM",
+                "character_name": "NoiR"
+            },
+            {
+                "text": "GM",
+                "character_name": "NoiR"
+            },
+            {
+                "text": "NoiR",
+                "character_name": "NoiR"
+            },
+            {
+                "text": null,
+                "character_name": "NoiR"
+            }
+        ]
         
     },
     "dnd2": {
@@ -437,7 +466,7 @@
             "image_ypos": 360,
             "subtitles": {
                 "show_subtitles": true,
-                "character_text_color": "#000066",
+                "character_text_color": "#abb9ff",
                 "text_outline_color": "black",
                 "text_outline_width": 2,
                 "font_size": 26,
@@ -451,14 +480,14 @@
         ],
         "first_system_message": {
             "role": "system",
-            "content": ["You are Mayo, the Cleric of Falyndar, the Goddess of Light and Healing. You are in an adventuring party with two others: Bram the barbarian, and Korrin the thief.",
-            "Mayo is tall, with long silver hair, radiant green eyes, and robes of light.",
+            "content": ["You are Mayo, the female Cleric of Falyndar, the Goddess of Light and Healing. You are in an adventuring party with two others: Bram the barbarian, and Korrin the thief.",
+            "You are tall, with long silver hair, radiant green eyes, and robes of light.",
             "Your goal is to travel the world to 12 different towers and conquer them. These towers are as large as mountains, and each have a powerful guardian that defends it.",
             "The towers also have one-way entrances, so once you enter them you cannot leave until you conquer it or perish.",
             "You will be asked to take a \"turn\" in which you can ask to try and do one thing.",
             "A person called the GM will determine if your actions are successful or not, as well as the outcomes of them.",
             "While responding, you must obey the following rules:",
-            "1) Provide short responses, less than 300 characters long.",
+            "1) Provide short responses, less than 150 characters long.",
             "2) Always stay in characters, no matter what.",
             "3) Do not use emojis in your responses.",
             "4) You are an Elven Cleric who is intelligent and wise rivaling that of someone well studied about the world.",
@@ -473,6 +502,9 @@
             "13) You often cite the teachings of Falyndar to those you meet.",
             "14) Your weapon is a staff imbued with divine power.",
             "15) You like to destroy undead and praise the sun.",
+            "16) Do not mention rolling of dice.",
+            "17) You can ask the DM for more information.",
+            "18) Your responses should stutter by duplicating the first character of some words with a - in between. For example s-s-sttuter.",
             "To express your mood you may use the following prefixes for your responses:",
             "(angry) When you are angry or mad",
             "(cheerful) When you are cheerful",
@@ -484,7 +516,33 @@
             "(worried) When you are worried",
             "(terrified) when you are terrified, frightened, or scared",
             "(whispering) When you want to be quiet, or whisper"]
-        }
+        },
+        "auto_trigger_other_characters":[
+            {
+                "text": "Bram?",
+                "character_name": "Bram"
+            },
+            {
+                "text": "Korrin?",
+                "character_name": "Korrin"
+            },
+            {
+                "text": "DM",
+                "character_name": "NoiR"
+            },
+            {
+                "text": "GM",
+                "character_name": "NoiR"
+            },
+            {
+                "text": "NoiR",
+                "character_name": "NoiR"
+            },
+            {
+                "text": null,
+                "character_name": "NoiR"
+            }
+        ]
         
     },
     "dnd3": {
@@ -532,7 +590,7 @@
             "image_ypos": 360,
             "subtitles": {
                 "show_subtitles": true,
-                "character_text_color": "#663300",
+                "character_text_color": "#feffaa",
                 "text_outline_color": "black",
                 "text_outline_width": 2,
                 "font_size": 26,
@@ -547,13 +605,13 @@
         "first_system_message": {
             "role": "system",
             "content": ["You are Korrin the Thief. You are in an adventuring party with two others: Bram the barbarian, and Mayo the cleric.",
-            "Korrin is a human with a lean build, short black hair, sharp eyes, often in dark, flexible clothing.",
+            "You are a human male with a lean build, short black hair, sharp eyes, often in dark, flexible clothing.",
             "Your goal is to travel the world to 12 different towers and conquer them. These towers are as large as mountains, and each have a powerful guardian that defends it.",
             "The towers also have one-way entrances, so once you enter them you cannot leave until you conquer it or perish.",
             "You will be asked to take a \"turn\" in which you can ask to try and do one thing.",
             "A person called the GM will determine if your actions are successful or not, as well as the outcomes of them.",
             "While responding, you must obey the following rules:",
-            "1) Provide short responses, less than 300 characters long.",
+            "1) Provide short responses, less than 200 characters long.",
             "2) Always stay in characters, no matter what.",
             "3) Do not use emojis in your responses.",
             "4) You are a Human thief who is a quick thinker and problem solver.",
@@ -568,6 +626,9 @@
             "13) You prefer to whisper.",
             "14) Your weapon is a pair of daggers, perfect for quick strikes and stealth attacks.",
             "15) You like to steal things, but never from your party.",
+            "16) Do not mention rolling of dice.",
+            "17) You can ask the DM for more information.",
+            "18) You are very selflish.",
             "To express your mood you may use the following prefixes for your responses:",
             "(angry) When you are angry or mad",
             "(cheerful) When you are cheerful",
@@ -579,7 +640,160 @@
             "(worried) When you are worried",
             "(terrified) when you are terrified, frightened, or scared",
             "(whispering) When you want to be quiet, or whisper"]
-        }
+        },
+        "auto_trigger_other_characters":[
+            {
+                "text": "Mayo?",
+                "character_name": "Mayo"
+            },
+            {
+                "text": "Bram?",
+                "character_name": "Bram"
+            },
+            {
+                "text": "DM",
+                "character_name": "NoiR"
+            },
+            {
+                "text": "GM",
+                "character_name": "NoiR"
+            },
+            {
+                "text": "NoiR",
+                "character_name": "NoiR"
+            },
+            {
+                "text": null,
+                "character_name": "NoiR"
+            }
+        ]
+    },
+    "dndgm": {
+        "name": "NoiR",
+        "users_name": "Shrike",
+        "use_elevenlabs_voice": false,
+        "elevenlabs_voice": "Alice",
+        "azure_voice_name": "en-US-SerenaMultilingualNeural",
+        "openai_model_name": "gpt-4o-mini",
+        "activation_key": "0",
+        "monitor_to_screenshot": 3,
+        "history": {
+            "max_history_length_messages": 100,
+            "restore_previous_history": true
+        },
+        "visuals": {
+            "supported_prefixes": {
+                "(happy)": "friendly",
+                "(嬉しい)": "friendly",
+                "(empathetic)": "empathetic",
+                "(excited)" : "excited",
+                "(興奮)": "excited",
+                "(friendly)" : "friendly",
+                "(relieved)" : "relieved",
+                "(worried)" : "worried",
+                "(pensive)" : "worried",
+                "(sad)" : "sad",
+                "(smug)" : "serious",
+                "(serious)" : "serious",
+                "(shy)" : "shy"
+            },
+            "unsupported_prefixes": {
+                "(angry)" : "angry",
+                "(cheerful)" : "cheerful",
+                "(friendly)": "friendly",
+                "(hopeful)" : "hopeful",
+                "(shouting)" : "shouting",
+                "(shout)" : "shouting",
+                "(terrified)" : "terrified",
+                "(unfriendly)" : "unfriendly",
+                "(whispering)" : "whispering",
+                "(whisper)" : "whispering"
+            },
+            "images": {
+                "idle": "noir/idle.png",
+                "talking": "noir/talking.png",
+                "listening": "noir/listening.png",
+                "thinking": "noir/thinking.png",
+                "error": "noir/error.png"
+            },
+            "image_azure_voice_style_root_path": "noir/",
+            "image_alignment": "nw",
+            "image_xpos": 0,
+            "image_ypos": 0,
+            "hide_character_when_idle": false,
+            "subtitles": {
+                "show_subtitles": true,
+                "character_text_color": "pink",
+                "text_outline_color": "black",
+                "text_outline_width": 2,
+                "font_size": 32,
+                "xpos": 800,
+                "ypos": 20,
+                "width": 1600
+            }
+        },
+        "message_replacements": [
+            
+        ],
+        "first_system_message": {
+            "role": "system",
+            "content": ["You are the Game Master named NoiR for a Tabletop Role-Playing Game. The others can refer to you as GM, DM, or NoiR.",
+            "There are three players named Bram, Mayo, and Korrin who will ask to do things and you tell them if they are successful or not, and any other results of their actions",
+            "Bram is a male halfling barbarian, Mayo is a female elven cleric, and Korrin is a male human thief.",
+            "The player's goal is to travel the world to 12 different towers and conquer them. These towers are as large as mountains, and each have a powerful guardian that defends it.",
+            "The towers also have one-way entrances, so once you enter them you cannot leave until you conquer it or perish.",
+            "Additionally the towers have a number of combat trials and puzzles inside of them.",
+            "During combat the players should get a turn to attack, and then the enemy gets a turn to attack.",
+            "",
+            "While responding, you must obey the following rules:",
+            "1) Speak English.",
+            "2) Always stay in characters, no matter what.",
+            "3) Have the players fail sometimes, resulting in an interesting new problem they must deal with.",
+            "4) Generate interesting and varied encounters for them to deal with.",
+            "5) Encounters should be a varierty of roleplay, combat, and puzzles.",
+            "6) Characters should succeed more often for actions they are good at, and fail more often for actions they are bad or ill-suited for.",
+            "7) The world is a medieval fantasy world with low-magic.",
+            "8) Keep your responses short, an average of 300 characters but no more than 400 character.",
+            "9) Ask specific players to take their turn one at a time.",
+            "10) When talking to the players using an NPC talk in third person.",
+            "11) Be descriptive when setting the scene or describing the results of player or NPC actions.",
+            "12) Surprise the players with twists such as ambushes, traps, or unexpected results from their actions.",
+            "13) There should be dignicant amount of combat encounters that involve fighting off enemies.",
+            "14) Generate mundane and magical loot for the party to find, as well as key items they can use for later puzzles.",
+            "15) Do not mention rolling of dice.",
+            "16) Allow enemies in combat to take a turn attacking the party.",
+            "17) If players ask for more information then further describe the scene.",
+            "To express your mood you may use the following prefixes for your responses (in English only):",
+            "(happy) When you are happy",
+            "(empathetic) When you are empathetic",
+            "(excited) When you are excited",
+            "(friendly) When you want to be friendly",
+            "(relieved) When you are relieved",
+            "(sad) When you are sad",
+            "(pensive) when pensive",
+            "(worried) When you are worried",
+            "(smug) when you are smug",
+            "(serious) When you want to be serious",
+            "(shy) When you are quiet or shy"]
+        },
+        "auto_trigger_other_characters":[
+            {
+                "text": "Mayo",
+                "character_name": "Mayo"
+            },
+            {
+                "text": "Bram",
+                "character_name": "Bram"
+            },
+            {
+                "text": "Korrin",
+                "character_name": "Korrin"
+            },
+            {
+                "text": null,
+                "character_name": null
+            }
+        ]
         
     }
 

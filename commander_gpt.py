@@ -15,6 +15,7 @@ from lib.ai_character import AICharacter
 from rich import print
 import time
 import math
+import random
 
 
 class CommanderGPTApp:
@@ -169,6 +170,60 @@ class CommanderGPTApp:
         )
         self.canvas.pack()
 
+    def init_logic_threads(self):
+        """Initializes the main thread that will handle the connections to the AI endpoints.
+
+        Starts new threads that will terminate if the main process terminates.
+        The first thread handles user input.
+        The second thread handles the queue of characters who you activated to respond.
+        There is then a thread for each character who waits for their specific activation key to be pressed and add themselves to the queue.
+        The last thread just allows keyboard toggling of screenshots on or off.
+        """
+        self.character_activation_queue = []
+        self.is_talking = False
+        # one thread to handle waiting on the mic input
+        handle_mic_input_thread = threading.Thread(
+            target=self.handle_mic_input, daemon=True
+        )
+        handle_mic_input_thread.start()
+        # thread to go through queue of activated characters and ask them the question
+        handle_activate_next_character_thread = threading.Thread(
+            target=self.activate_next_character, daemon=True
+        )
+        handle_activate_next_character_thread.start()
+
+        # one thread per character to wait on being activated
+        # when activated they will add themselves to the queue to be asked the question recorded by the mic
+        ai_character: AICharacter
+        for ai_character in self.ai_characters:
+            # Create thread to handle the AI stuff, they will terminate if the main process terminates
+            thread_chatgpt = threading.Thread(
+                target=self.handle_chatgpt,
+                daemon=True,
+                kwargs={"ai_character": ai_character},
+            )
+            # Start the thread
+            thread_chatgpt.start()
+
+        non_blocking_toggles = threading.Thread(
+            target=self.handle_non_blocking_toggles, daemon=True
+        )
+
+        non_blocking_toggles.start()
+
+    def update(self):
+        """Periodically updates the visuals and interactions in the app.
+
+        This method calls the update_visuals method to refresh the display. It runs in a loop to keep updating until the app is closed.
+        """
+        # determine how much time has past since the last update
+        now = time.monotonic()
+        # update visuals telling it how long it's been since an update
+        self.update_visuals(time=now)
+
+        # Schedule the next update (every 10ms)
+        self.root.after(10, self.update)
+
     def update_visuals(self, time: int):
         """Updates the visuals on the canvas.
 
@@ -214,91 +269,39 @@ class CommanderGPTApp:
         for ai_character in self.ai_characters:
             # Show subtitles
             if ai_character.show_subtitles:
-                self.draw_text_with_outline(ai_character=ai_character)
+                self.draw_text_with_outline(
+                    xpos=ai_character.subtitle_xpos,
+                    ypos=ai_character.subtitle_ypos,
+                    text=ai_character.subtitles,
+                    text_color=ai_character.character_text_color,
+                    outline_color=ai_character.text_outline_color,
+                    width=ai_character.subtitle_width,
+                    font=ai_character.font,
+                    outline_width=ai_character.text_outline_width,
+                )
 
         # draw user's subtitles from the mic input
         if self.subtitles:
-            self.draw_users_text_with_outline()
-
-    def draw_users_text_with_outline(self):
-        """Draws text on the canvas with an outline effect.
-
-        The text is drawn multiple times with offsets to create the appearance of an outline.
-        Uses the global subtitle's configurations and not a particular character's.
-        TODO: Combine the two to remove code duplication.
-        """
-        # Draw outline text offset from where the actual text will be
-        for x_offset in range(-self.text_outline_width, self.text_outline_width + 1):
-            for y_offset in range(
-                -self.text_outline_width, self.text_outline_width + 1
-            ):
-                self.canvas.create_text(
-                    self.subtitle_xpos + x_offset,
-                    self.subtitle_ypos + y_offset,
-                    text=self.subtitles,
-                    font=self.font,
-                    fill=self.text_outline_color,
-                    anchor="n",
-                    width=self.subtitle_width,
-                    justify="center",
-                )
-
-        self.canvas.create_text(
-            self.subtitle_xpos,
-            self.subtitle_ypos,
-            text=self.subtitles,
-            font=self.font,
-            fill=self.user_text_color,
-            anchor="n",
-            width=self.subtitle_width,
-            justify="center",
-        )
-
-    def draw_text_with_outline(self, ai_character: AICharacter):
-        """Draws text on the canvas with an outline effect.
-
-        The text is drawn multiple times with offsets to create the appearance of an outline.
-
-        Args:
-            ai_character (AICharacter): The ai character to display their text for.
-        """
-        # Draw outline text offset from where the actual text will be
-        for x_offset in range(
-            -ai_character.text_outline_width, ai_character.text_outline_width + 1
-        ):
-            for y_offset in range(
-                -ai_character.text_outline_width, ai_character.text_outline_width + 1
-            ):
-                self.canvas.create_text(
-                    ai_character.subtitle_xpos + x_offset,
-                    ai_character.subtitle_ypos + y_offset,
-                    text=ai_character.subtitles,
-                    font=ai_character.font,
-                    fill=ai_character.text_outline_color,
-                    anchor="n",
-                    width=ai_character.subtitle_width,
-                    justify="center",
-                )
-
-        self.canvas.create_text(
-            ai_character.subtitle_xpos,
-            ai_character.subtitle_ypos,
-            text=ai_character.subtitles,
-            font=ai_character.font,
-            fill=ai_character.voice_color,
-            anchor="n",
-            width=ai_character.subtitle_width,
-            justify="center",
-        )
+            self.draw_text_with_outline(
+                xpos=self.subtitle_xpos,
+                ypos=self.subtitle_ypos,
+                text=self.subtitles,
+                text_color=self.user_text_color,
+                outline_color=self.text_outline_color,
+                width=self.subtitle_width,
+                font=self.font,
+                outline_width=self.text_outline_width,
+            )
 
     def show_image(self, file_path: str, offset_y: int, ai_character: AICharacter):
         """Displays an image on the canvas.
 
-        Tries to load the image from the specified file path and display it centered on the canvas.
+        Tries to load the image from the specified file path and display it based on the AI character's config.
 
         Args:
             file_path (str): The path to the image file to be displayed.
-
+            offset_y (int): Shift the image by this many pixels down.
+            ai_character (AICharacter): The AI Character to draw the image of.
         Raises:
             Exception: If the image cannot be loaded, an error message is printed.
         """
@@ -323,46 +326,53 @@ class CommanderGPTApp:
             ai_character.voice_style = None
             ai_character.voice_image = None
 
-    def init_logic_threads(self):
-        """Initializes the main thread that will handle the connections to the AI endpoints.
+    def draw_text_with_outline(
+        self,
+        xpos: int,
+        ypos: int,
+        text: str,
+        text_color: str,
+        outline_color: str,
+        width: int,
+        font: tkFont,
+        outline_width: int = 2,
+    ):
+        """Draws text on the canvas with an outline effect.
 
-        Starts new threads that will terminate if the main process terminates.
-        The first thread handles user input.
-        The second thread handles the queue of characters who you activated to respond.
-        There is then a thread for each character who waits for their specific activation key to be pressed and add themselves to the queue.
-        The last thread just allows keyboard toggling of screenshots on or off.
+        The text is drawn multiple times with offsets to create the appearance of an outline.
+        Args:
+            xpos (int): The x position given in pixels.
+            ypos (int): The x position given in pixels.
+            text (str): The text to draw.
+            text_color (str): The colour of the text.
+            outline_color (str): The colour of the text's outline.
+            width (int): The width of the text are it can be drawn to, given in pixels.
+            font (tkFont): The font face to use.
         """
-        self.character_activation_queue = []
-        self.is_talking = False
-        # one thread to handle waiting on the mic input
-        handle_mic_input_thread = threading.Thread(
-            target=self.handle_mic_input, daemon=True
-        )
-        handle_mic_input_thread.start()
-        # thread to go through queue of activated characters and ask them the question
-        handle_activate_next_character_thread = threading.Thread(
-            target=self.activate_next_character, daemon=True
-        )
-        handle_activate_next_character_thread.start()
+        # Draw outline text offset from where the actual text will be
+        for x_offset in range(-outline_width, outline_width + 1):
+            for y_offset in range(-outline_width, outline_width + 1):
+                self.canvas.create_text(
+                    xpos + x_offset,
+                    ypos + y_offset,
+                    text=text,
+                    font=font,
+                    fill=outline_color,
+                    anchor="n",
+                    width=width,
+                    justify="center",
+                )
 
-        # one thread per character to wait on being activated
-        # when activated they will add themselves to the queue to be asked the question recorded by the mic
-        ai_character: AICharacter
-        for ai_character in self.ai_characters:
-            # Create thread to handle the AI stuff, they will terminate if the main process terminates
-            thread_chatgpt = threading.Thread(
-                target=self.handle_chatgpt,
-                daemon=True,
-                kwargs={"ai_character": ai_character},
-            )
-            # Start the thread
-            thread_chatgpt.start()
-
-        non_blocking_toggles = threading.Thread(
-            target=self.handle_non_blocking_toggles, daemon=True
+        self.canvas.create_text(
+            xpos,
+            ypos,
+            text=text,
+            font=font,
+            fill=text_color,
+            anchor="n",
+            width=width,
+            justify="center",
         )
-
-        non_blocking_toggles.start()
 
     def handle_mic_input(self):
         """Handles the mic input.
@@ -514,12 +524,49 @@ class CommanderGPTApp:
 
                     ai_character.state = "talking"
                     # while this character talks, the others listen
+                    other_ai_character: AICharacter
                     for other_ai_character in ai_character.other_ai_characters:
                         other_ai_character.state = "listening"
                         other_ai_character.subtitles = None
 
                     ai_character.voice_color = ai_character.character_text_color
                     ai_character.subtitles = openai_result
+
+                    # there are other characters we could potentially trigger
+                    if (
+                        ai_character.auto_trigger_other_characters is not None
+                        and ai_character.other_ai_characters is not None
+                    ):
+                        # check all trigger conditions
+                        triggered_a_character = False
+                        for (
+                            auto_trigger_condition
+                        ) in ai_character.auto_trigger_other_characters:
+                            # text that must be found to trigger
+                            text = auto_trigger_condition.get("text", None)
+                            if text is None or (text is not None and openai_result.find(text) > 0):
+                                # found the trigger so get the character we need to activate
+                                character_name = auto_trigger_condition.get(
+                                    "character_name", None
+                                )
+                                if character_name is not None:
+                                    # trigger the character specified based on their name
+                                    for (
+                                        other_ai_character
+                                    ) in ai_character.other_ai_characters:
+                                        if other_ai_character.name == character_name:
+                                            self.activate_character(other_ai_character)
+                                            triggered_a_character = True
+                                            break
+                                else:
+                                    # no character name was specified so trigger someone random
+                                    self.activate_character(
+                                        random.choice(ai_character.other_ai_characters)
+                                    )
+                                    triggered_a_character = True
+                            # only allow them to trigger one other character
+                            if triggered_a_character:
+                                break
 
                     self.speechtotext_manager.texttospeech_from_text(
                         azure_voice_name=ai_character.azure_voice_name,
@@ -568,19 +615,6 @@ class CommanderGPTApp:
                 print("[green]\nScreenshot will be sent with your next message.")
             else:
                 print("[yelow]\nYour next message will be text-only.")
-
-    def update(self):
-        """Periodically updates the visuals and interactions in the app.
-
-        This method calls the update_visuals method to refresh the display. It runs in a loop to keep updating until the app is closed.
-        """
-        # determine how much time has past since the last update
-        now = time.monotonic()
-        # update visuals telling it how long it's been since an update
-        self.update_visuals(time=now)
-
-        # Schedule the next update (every 10ms)
-        self.root.after(10, self.update)
 
 
 if __name__ == "__main__":

@@ -131,6 +131,11 @@ class AICharacter:
                         "talking"
                     ]
 
+        # auto-prompts (if this character mentions something it can activate another character)
+        self.auto_trigger_other_characters = self.character_info.get(
+            "auto_trigger_other_characters", None
+        )
+
         # 1 for down, -1 for up
         self.image_offset_y = 0
         self.max_amplitude = self.visuals_config.get("max_amplitude", 5)
