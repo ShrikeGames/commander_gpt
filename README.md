@@ -271,3 +271,5 @@ DO NOT RUN AS SUDO IF ON LINUX.
   - This is because openAI refuses to identify anything that seems like it contains real people, or has other unspecified criteria that refuses to process it
 - (Maybe) Parse the response from openAI and allow it to control the keyboard/mouse?
   - Might be some simpler games where that kind of logic could be possible
+- Add support for loading a local LLM instead of using OpenAI
+  - If possible would open up an effectively free complete package
