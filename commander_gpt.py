@@ -454,7 +454,8 @@ class CommanderGPTApp:
                     prompt=self.last_characters_response,
                     monitor_to_screenshot=monitor_number,
                     max_history_length_messages=ai_character.max_history_length_messages,
-                    other_ai_characters=ai_character.other_ai_characters,
+                    model = ai_character.openai_model_name,
+                    other_ai_characters=ai_character.other_ai_characters
                 )
                 ai_character.subtitles = None
                 if openai_result is None:
