@@ -94,7 +94,7 @@ class ElevenLabsManager:
             file_path=tts_file,
             sleep_during_playback=True,
             delete_file=True,
-            play_using_music=False,
+            play_using_music=True,
         )
 
         return tts_file

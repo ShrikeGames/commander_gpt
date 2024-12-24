@@ -488,6 +488,11 @@ class CommanderGPTApp:
                 # submit to 11labs to get audio
                 if ai_character.use_elevenlabs_voice:
                     print("convert text to audio and play it")
+                    ai_character.voice_style = None
+                    # generic talking by default
+                    ai_character.voice_image = ai_character.images_by_state.get(
+                        "talking"
+                    )
                     self.elevenlabs_manager.text_to_audio(
                         ai_character=ai_character,
                         input_text=openai_result,

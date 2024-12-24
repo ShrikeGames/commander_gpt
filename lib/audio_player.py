@@ -80,6 +80,7 @@ class AudioManager:
                 pygame.mixer.music.load(converted_wav)
                 pygame.mixer.music.play()
         else:
+            converted = False
             # Use Pygame Sound for simultaneous playback
             pygame_sound = pygame.mixer.Sound(file_path)
             pygame_sound.play()
