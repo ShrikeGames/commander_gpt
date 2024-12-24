@@ -264,7 +264,8 @@ DO NOT RUN AS SUDO IF ON LINUX.
   - Seems very hard to do with how the azure TTS API works
 - Create utility for generating the voice style variants of a given portrait using OpenAI's image generation.
   - Making all of them manually might be more work than most are willing to do
-  - The results generated images might not be good, need to test it
+  - Note: dall-e-3 seems completely useless for this purpose (available through openAI) and is expensive
+  - Note: image generation comes with possible copyright issues
 - (Maybe) Would be nice to support full animations or 3D models easily
   - Could look at azure's virtual assistants as one option
 - (Maybe) Instead of sending images directly to OpenAI use another service to describe the image and send OpenAI the description
@@ -273,3 +274,8 @@ DO NOT RUN AS SUDO IF ON LINUX.
   - Might be some simpler games where that kind of logic could be possible
 - Add support for loading a local LLM instead of using OpenAI
   - If possible would open up an effectively free complete package
+- (Maybe) Add GUI for selecting or editing characters if none are passed in the arguments.
+  - List existing configured characters
+  - Edit their positions, subtitles
+  - Add a new character
+
