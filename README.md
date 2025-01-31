@@ -76,6 +76,7 @@ pip install -r requirements.txt
   - https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=YOUR_CLIENT_ID&redirect_uri=http://localhost:4343/oauth/callback&scope=chat:read
   - Note: The callback url also must match what you defined for your Application on dev.twitch.tv
   - Note: Based on the "scope" it only allows the bot to read messages and not send them, moderate, or do other interactions with twitch chat.
+  - The URL it redirects you to will contain the token as a parameter, you can copy it from there.
 
 ## Azure
 - Create an account and login to https://portal.azure.com
@@ -273,22 +274,25 @@ DO NOT RUN AS SUDO IF ON LINUX.
 
 
 ## TODOs
+- Add YouTube chat support similar to twitch chat.
+  - Support both at once for multistreaming?
+- Add support for loading a local LLM instead of using OpenAI
+  - If possible would open up an effectively free complete package
 - (Maybe) Make the animation match the audio playback's pace
   - Seems very hard to do with how the azure TTS API works
-- Create utility for generating the voice style variants of a given portrait using OpenAI's image generation.
-  - Making all of them manually might be more work than most are willing to do
-  - Note: dall-e-3 seems completely useless for this purpose (available through openAI) and is expensive
-  - Note: image generation comes with possible copyright issues
 - (Maybe) Would be nice to support full animations or 3D models easily
   - Could look at azure's virtual assistants as one option
 - (Maybe) Instead of sending images directly to OpenAI use another service to describe the image and send OpenAI the description
   - This is because openAI refuses to identify anything that seems like it contains real people, or has other unspecified criteria that refuses to process it
 - (Maybe) Parse the response from openAI and allow it to control the keyboard/mouse?
   - Might be some simpler games where that kind of logic could be possible
-- Add support for loading a local LLM instead of using OpenAI
-  - If possible would open up an effectively free complete package
+  - Would almost certainly require running as a superuser
 - (Maybe) Add GUI for selecting or editing characters if none are passed in the arguments.
   - List existing configured characters
   - Edit their positions, subtitles
   - Add a new character
-
+- (Probably not) Create utility for generating the voice style variants of a given portrait using OpenAI's image generation.
+  - Making all of them manually might be more work than most are willing to do
+  - Note: dall-e-3 seems completely useless for this purpose (available through openAI) and is expensive
+  - Note: image generation comes with possible copyright issues
+  - From my tests this isn't very practical at this time.
