@@ -33,6 +33,7 @@ class AICharacter:
         Extracts config values from the character_info dictionary.
         """
         self.name = self.character_info.get("name", "AI")
+        self.original_users_name = self.character_info.get("users_name", "Player")
         self.users_name = self.character_info.get("users_name", "Player")
 
         self.other_ai_characters = []
@@ -130,7 +131,7 @@ class AICharacter:
                     self.images_by_state[prefix_no_brackets] = self.images_by_state[
                         "talking"
                     ]
-        
+
         # 1 for down, -1 for up
         self.image_offset_y = 0
         self.max_amplitude = self.visuals_config.get("max_amplitude", 5)

@@ -78,9 +78,8 @@ class AzureConnectionsManager:
 
         voice_style = azure_voice_style
 
-        # Set the voice and format for synthesis
+        # Set the voice
         self.output_speech_config.speech_synthesis_voice_name = azure_voice_name
-        self.output_speech_config.speech_synthesis_output_format_string
 
         speech_synthesizer = speechsdk.SpeechSynthesizer(
             speech_config=self.output_speech_config,
@@ -110,7 +109,6 @@ class AzureConnectionsManager:
                     print(f"[red]\nError details: {cancellation_details.error_details}")
                     print("Did you set the speech resource key and region values?")
                     return None
-
         return speech_synthesis_result
 
     def speechtotext_from_mic_continuous(self, stop_key="8", commander_gpt=None):

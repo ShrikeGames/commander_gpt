@@ -5,6 +5,9 @@
     "mic_activation_key": "Key.home",
     "enable_screenshot_toggle_key": "=",
     "speech_recognition_language": "en-US",
+    "enable_twitch_integration": false,
+    "twitch_channel_name": "ShrikeG",
+    "twitch_chat_history_length": 50,
     "subtitles": {
         "show_subtitles": true,
         "user_text_color": "white",

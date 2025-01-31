@@ -11,12 +11,13 @@ from lib.utils import (
 from lib.azure_connections import AzureConnectionsManager
 from lib.eleven_labs import ElevenLabsManager
 from lib.ai_character import AICharacter
+from lib.twitch_bot import TwitchBot
 
 from rich import print
 import time
 import math
-import random
 import re
+
 
 class CommanderGPTApp:
     def __init__(self, root, args):
@@ -104,6 +105,16 @@ class CommanderGPTApp:
         # whether the next message sent to an ai_character would include a screenshot or not
         self.screen_shot_enabled = False
 
+        # Twitch configs
+        self.enable_twitch_integration = self.system_config.get(
+            "enable_twitch_integration", False
+        )
+        self.twitch_channel_name = self.system_config.get("twitch_channel_name", None)
+        self.twitch_chat_history_length = self.system_config.get(
+            "twitch_chat_history_length", 50
+        )
+
+        self.twitch_access_token = self.token_config.get("twitch_access_token", None)
         # User's subtitles
         self.subtitles_config = self.system_config.get("subtitles", {})
         self.show_subtitles = self.subtitles_config.get("show_subtitles", False)
@@ -146,6 +157,14 @@ class CommanderGPTApp:
                 "speech_recognition_language", "en-US"
             ),
         )
+
+        self.twitch_bot: TwitchBot = None
+        if self.twitch_channel_name:
+            self.twitch_bot = TwitchBot(
+                twitch_access_token=self.twitch_access_token,
+                twitch_channel_name=self.twitch_channel_name,
+                chat_history_length=self.twitch_chat_history_length,
+            )
 
     def init_visuals(self, root: tk.Tk):
         """Initializes the main window and canvas for visual display.
@@ -204,6 +223,24 @@ class CommanderGPTApp:
             )
             # Start the thread
             thread_chatgpt.start()
+
+            # Thread to respond to twitch chat messages if enabled
+            if self.enable_twitch_integration:
+                thread_twitch_chat = threading.Thread(
+                    target=self.handle_twitch_chat_responses,
+                    daemon=True,
+                    kwargs={"ai_character": ai_character},
+                )
+                # Start the thread
+                thread_twitch_chat.start()
+        # thread to read twitch messages if enabled
+        if self.enable_twitch_integration:
+            thread_twitch_chat_monitor = threading.Thread(
+                target=self.handle_twitch_chat_monitor,
+                daemon=True,
+            )
+            # Start the thread
+            thread_twitch_chat_monitor.start()
 
         non_blocking_toggles = threading.Thread(
             target=self.handle_non_blocking_toggles, daemon=True
@@ -398,6 +435,8 @@ class CommanderGPTApp:
             for ai_char in self.ai_characters:
                 ai_char.state = "listening"
                 ai_char.subtitles = None
+                # ensure to reset the user's name to the original configured one
+                ai_char.users_name = ai_char.original_users_name
 
             # get mic result
             mic_result = self.speechtotext_manager.speechtotext_from_mic_continuous(
@@ -453,8 +492,8 @@ class CommanderGPTApp:
                     prompt=self.last_characters_response,
                     monitor_to_screenshot=monitor_number,
                     max_history_length_messages=ai_character.max_history_length_messages,
-                    model = ai_character.openai_model_name,
-                    other_ai_characters=ai_character.other_ai_characters
+                    model=ai_character.openai_model_name,
+                    other_ai_characters=ai_character.other_ai_characters,
                 )
                 ai_character.subtitles = None
                 if openai_result is None:
@@ -535,7 +574,7 @@ class CommanderGPTApp:
                     for other_ai_character in ai_character.other_ai_characters:
                         other_ai_character.state = "listening"
                         other_ai_character.subtitles = None
-                    
+
                     # there are other characters we could potentially trigger
                     trigger_pattern = re.compile("\[trigger\](.*?)\[\/trigger\]")
                     if (
@@ -558,8 +597,8 @@ class CommanderGPTApp:
                                             self.activate_character(other_ai_character)
                                             break
                             # Remove all instances of [trigger]NAME[/trigger]
-                            openai_result = re.sub(trigger_pattern, '', openai_result)
-                    
+                            openai_result = re.sub(trigger_pattern, "", openai_result)
+
                     ai_character.voice_color = ai_character.character_text_color
                     ai_character.subtitles = openai_result
 
@@ -598,6 +637,36 @@ class CommanderGPTApp:
             wait_until_key(key_to_match=ai_character.activation_key)
             print(f"[yellow]\n{ai_character.name} has been queued up to talk.")
             self.activate_character(ai_character)
+
+    def handle_twitch_chat_responses(self, ai_character: AICharacter):
+        while True:
+            # if user is talking through their mic we won't respond to twitch chat
+            if self.is_talking:
+                continue
+            # we will only respond to twitch chat if we're idle
+            if ai_character.state != "idle":
+                continue
+            # there's a queue of characters talking already so don't respond to chat
+            if len(self.character_activation_queue) > 0:
+                continue
+
+            # get mic result
+            twitch_message = self.twitch_bot.pick_random_message(ai_character=ai_character, remove_after=True)
+            # only respond if there's a message
+            if twitch_message is not None:
+                self.subtitles = twitch_message
+                self.last_characters_response = twitch_message
+                print(
+                    f"[yellow]\n{ai_character.name} has been queued up to respond to twitch chat's message {twitch_message}'"
+                )
+                self.activate_character(ai_character)
+            else:
+                # only check once a second at most
+                time.sleep(1)
+
+    def handle_twitch_chat_monitor(self):
+        if self.enable_twitch_integration:
+            self.twitch_bot.run()
 
     def handle_non_blocking_toggles(self):
         """Waits for a key to pressed and toggles enabling of sending screenshots."""
