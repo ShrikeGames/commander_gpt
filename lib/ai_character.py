@@ -35,6 +35,7 @@ class AICharacter:
         self.name = self.character_info.get("name", "AI")
         self.original_users_name = self.character_info.get("users_name", "Player")
         self.users_name = self.character_info.get("users_name", "Player")
+        self.local_model_name = self.character_info.get("local_model_name", None)
 
         self.other_ai_characters = []
 

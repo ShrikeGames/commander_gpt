@@ -1,7 +1,7 @@
 from openai import OpenAI
 from rich import print
 from .utils import screenshot_encode_monitor
-
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 class OpenAiManager:
     """Manager for interacting with OpenAI's GPT models, handling chat history and image input."""
@@ -85,28 +85,54 @@ class OpenAiManager:
             # remove the 2nd history entry, leaving the 1st because it is the system message with their personality
             # and we don't want them to forget that
             self.chat_history.pop(1)
-
-        print("[yellow]\nAsking ChatGPT a question...")
-        completion = self.client.chat.completions.create(
-            model=model, messages=chat_history_to_send
-        )
-        # Add the model's response to the chat history
-        self.chat_history.append(
-            {
-                "role": completion.choices[0].message.role,
-                "content": completion.choices[0].message.content,
-            }
-        )
-        # share what we said to the other AI's as well
-        for other_ai_character in other_ai_characters:
-            other_ai_character.openai_manager.chat_history.append(
+        if ai_character.local_model_name:
+            print(f"[yellow]\nAsking {ai_character.local_model_name} a question...")
+            local_model = AutoModelForCausalLM.from_pretrained(ai_character.local_model_name)
+            local_tokenizer = AutoTokenizer.from_pretrained(ai_character.local_model_name)
+            if len(self.chat_history) <= 1:
+                print("First message sent, so including system prompt as well.")
+                prompt = f"{self.chat_history[0]['content']['text']}\n{prompt}"
+            input_ids = local_tokenizer.encode(prompt, return_tensors="pt")
+            local_output = local_model.generate(input_ids, max_new_tokens=50)
+            openai_answer = local_tokenizer.decode(local_output[0], skip_special_tokens=True)
+            # Add the model's response to the chat history
+            self.chat_history.append(
                 {
-                    "role": "user",
-                    "content": f"\n[{ai_character.name}]\n{completion.choices[0].message.content}",
+                    "role": "assistant",
+                    "content": openai_answer,
                 }
             )
+            # share what we said to the other AI's as well
+            for other_ai_character in other_ai_characters:
+                other_ai_character.openai_manager.chat_history.append(
+                    {
+                        "role": "user",
+                        "content": f"\n[{ai_character.name}]\n{openai_answer}",
+                    }
+                )
+        else:
+            print("[yellow]\nAsking ChatGPT a question...")
+            completion = self.client.chat.completions.create(
+                model=model, messages=chat_history_to_send
+            )
+            # Add the model's response to the chat history
+            self.chat_history.append(
+                {
+                    "role": completion.choices[0].message.role,
+                    "content": completion.choices[0].message.content,
+                }
+            )
+            # share what we said to the other AI's as well
+            for other_ai_character in other_ai_characters:
+                other_ai_character.openai_manager.chat_history.append(
+                    {
+                        "role": "user",
+                        "content": f"\n[{ai_character.name}]\n{completion.choices[0].message.content}",
+                    }
+                )
 
-        # Process and return the answer
-        openai_answer = completion.choices[0].message.content
+            # Process and return the answer
+            openai_answer = completion.choices[0].message.content
+        
         print(f"[green]\n{openai_answer}\n")
         return openai_answer
