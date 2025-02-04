@@ -39,7 +39,7 @@ class TwitchBot(commands.Bot):
 
     # We use a listener in our Component to display the messages received.
     async def event_message(self, message: Message) -> None:
-        #print(f"{message.author.display_name}: {message.content}")
+        # print(f"{message.author.display_name}: {message.content}")
         self.chat_history.append(message)
         if len(self.chat_history) > self.chat_history_length:
             # remove the oldest chat history

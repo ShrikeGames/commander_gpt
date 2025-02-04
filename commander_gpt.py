@@ -651,7 +651,9 @@ class CommanderGPTApp:
                 continue
 
             # get mic result
-            twitch_message = self.twitch_bot.pick_random_message(ai_character=ai_character, remove_after=True)
+            twitch_message = self.twitch_bot.pick_random_message(
+                ai_character=ai_character, remove_after=True
+            )
             # only respond if there's a message
             if twitch_message is not None:
                 self.subtitles = twitch_message

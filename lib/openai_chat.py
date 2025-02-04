@@ -1,12 +1,12 @@
 from openai import OpenAI
 from rich import print
 from .utils import screenshot_encode_monitor
-from transformers import AutoTokenizer, AutoModelForCausalLM
+
 
 class OpenAiManager:
     """Manager for interacting with OpenAI's GPT models, handling chat history and image input."""
 
-    def __init__(self, openai_api_key: str):
+    def __init__(self, openai_api_key: str, local_model=None, local_tokenizer=None):
         """Initializes the OpenAiManager with an API key for OpenAI access.
 
         Args:
@@ -16,11 +16,20 @@ class OpenAiManager:
             Exception: If the OpenAI client setup fails.
         """
         self.chat_history = []
-        try:
-            self.client = OpenAI(api_key=openai_api_key)
-        except Exception as e:
-            print("Failed to setup OpenAI")
-            exit(e)
+        self.first_time_run = True
+        if local_model and local_tokenizer:
+            try:
+                self.local_model = local_model
+                self.local_tokenizer = local_tokenizer
+            except Exception as e:
+                print("Failed to setup local model")
+                exit(e)
+        else:
+            try:
+                self.client = OpenAI(api_key=openai_api_key)
+            except Exception as e:
+                print("Failed to setup OpenAI")
+                exit(e)
 
     def chat_with_history(
         self,
@@ -87,14 +96,21 @@ class OpenAiManager:
             self.chat_history.pop(1)
         if ai_character.local_model_name:
             print(f"[yellow]\nAsking {ai_character.local_model_name} a question...")
-            local_model = AutoModelForCausalLM.from_pretrained(ai_character.local_model_name)
-            local_tokenizer = AutoTokenizer.from_pretrained(ai_character.local_model_name)
-            if len(self.chat_history) <= 1:
-                print("First message sent, so including system prompt as well.")
-                prompt = f"{self.chat_history[0]['content']['text']}\n{prompt}"
-            input_ids = local_tokenizer.encode(prompt, return_tensors="pt")
-            local_output = local_model.generate(input_ids, max_new_tokens=50)
-            openai_answer = local_tokenizer.decode(local_output[0], skip_special_tokens=True)
+            full_prompt = ""
+            if self.first_time_run:
+                print("First message sent, so including any chat history as well.")
+                for chat in self.chat_history:
+                    text = chat['content'][0]['text']
+                    full_prompt = f"{full_prompt}\n{text}"
+                self.first_time_run = False
+            else:
+                full_prompt = prompt
+            print("full_prompt: ", full_prompt)
+            input_ids = self.local_tokenizer.encode(full_prompt, return_tensors="pt")
+            local_output = self.local_model.generate(input_ids, max_new_tokens=100)
+            openai_answer = str(self.local_tokenizer.decode(
+                local_output[0], skip_special_tokens=True
+            )).replace(full_prompt, "").replace("<think>", "").replace("</think>", "")
             # Add the model's response to the chat history
             self.chat_history.append(
                 {
@@ -133,6 +149,6 @@ class OpenAiManager:
 
             # Process and return the answer
             openai_answer = completion.choices[0].message.content
-        
+
         print(f"[green]\n{openai_answer}\n")
         return openai_answer

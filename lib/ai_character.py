@@ -6,6 +6,7 @@ from .openai_chat import OpenAiManager
 from rich import print
 from os.path import exists
 import tkinter.font as tkFont
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 class AICharacter:
@@ -151,9 +152,20 @@ class AICharacter:
 
         Creates an OpenAIManager to communicate with chatGPT.
         """
-        self.openai_manager = OpenAiManager(
-            openai_api_key=self.commander_gpt.token_config.get("openai_api_key", None)
-        )
+        if self.local_model_name:
+            self.openai_manager = OpenAiManager(
+                openai_api_key=None,
+                local_model=AutoModelForCausalLM.from_pretrained(self.local_model_name),
+                local_tokenizer=AutoTokenizer.from_pretrained(self.local_model_name),
+            )
+        else:
+            self.openai_manager = OpenAiManager(
+                openai_api_key=self.commander_gpt.token_config.get(
+                    "openai_api_key", None
+                ),
+                local_model=None,
+                local_tokenizer=None,
+            )
 
     def init_chat_history(self):
         """Initializes chat history by reading or clearing history.
