@@ -186,6 +186,7 @@ class CommanderGPTApp:
             width=self.window_width,
             height=self.window_height,
             bg=self.background_colour,
+            highlightthickness=0,
         )
         self.canvas.pack()
 
