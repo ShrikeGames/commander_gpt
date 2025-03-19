@@ -181,6 +181,9 @@ class AICharacter:
                     self.chat_history_filepath
                 )
                 return
+            else:
+                file = open(self.chat_history_filepath, "w+")
+                file.write("")
         except Exception as e:
             print(f"[red]\nFailed to read chat history, will create a new one. {e}")
             # otherwise wipe it if it exists
