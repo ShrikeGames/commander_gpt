@@ -13,3 +13,4 @@ mss
 twitchio
 transformers
 torch
+ruff

@@ -48,6 +48,7 @@ class AICharacter:
             "use_elevenlabs_voice", True
         )
         self.elevenlabs_voice = self.character_info.get("elevenlabs_voice", None)
+        self.elevenlabs_model_id = self.character_info.get("elevenlabs_model_id", None)
         self.azure_voice_name = self.character_info.get(
             "azure_voice_name", "en-US-AvaMultilingualNeural"
         )
@@ -185,7 +186,7 @@ class AICharacter:
             # otherwise wipe it if it exists
             file = open(self.chat_history_filepath, "w+")
             file.write("")
-        
+
         # and enter the first system message if provided
         if self.first_system_message is not None:
             first_system_message_stringified = "\n".join(

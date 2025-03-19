@@ -539,6 +539,7 @@ class CommanderGPTApp:
                         voice=ai_character.elevenlabs_voice,
                         save_as_wave=True,
                         subdirectory="assets/audio",
+                        model_id=ai_character.elevenlabs_model_id,
                     )
                 else:
                     # Using Azure TTS
