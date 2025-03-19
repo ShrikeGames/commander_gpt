@@ -4,7 +4,7 @@
 		"users_name": "Shrike",
 		"use_elevenlabs_voice": false,
 		"elevenlabs_voice": "nowa",
-		"elevenlabs_model_id": "eleven_multilingual_v2",
+		"elevenlabs_model_id": "eleven_flash_v2_5",
 		"azure_voice_name": "en-US-SerenaMultilingualNeural",
 		"openai_model_name": "gpt-4o",
 		"activation_key": "Key.end",
