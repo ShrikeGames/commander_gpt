@@ -23,6 +23,7 @@ class ElevenLabsManager:
         self.voice_to_id = {}
         for voice in self.voices:
             self.voice_to_id[voice.name] = voice.voice_id
+            print(voice.name)
         self.voice_to_settings = {}
 
         self.audio_manager = AudioManager()
@@ -93,7 +94,7 @@ class ElevenLabsManager:
         self.audio_manager.play_audio(
             file_path=tts_file,
             sleep_during_playback=True,
-            delete_file=True,
+            delete_file=False,
             play_using_music=True,
         )
 

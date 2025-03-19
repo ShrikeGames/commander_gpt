@@ -1,0 +1,1 @@
+Placeholder file. The chat history logs will go in this folder.
