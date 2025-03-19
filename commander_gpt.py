@@ -3,15 +3,15 @@ import tkinter.font as tkFont
 from tkinter import PhotoImage
 import threading
 import sys
-from lib.utils import (
+from ml.utils import (
     read_config_file,
     wait_until_key,
     write_json_file,
 )
-from lib.azure_connections import AzureConnectionsManager
-from lib.eleven_labs import ElevenLabsManager
-from lib.ai_character import AICharacter
-from lib.twitch_bot import TwitchBot
+from ml.azure_connections import AzureConnectionsManager
+from ml.eleven_labs import ElevenLabsManager
+from ml.ai_character import AICharacter
+from ml.twitch_bot import TwitchBot
 
 from rich import print
 import time

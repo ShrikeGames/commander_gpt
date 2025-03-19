@@ -1,5 +1,5 @@
 azure-cognitiveservices-speech
-elevenlabs==0.2.8
+elevenlabs==1.54.0
 mutagen
 openai==1.58.1
 pygame==2.3.0

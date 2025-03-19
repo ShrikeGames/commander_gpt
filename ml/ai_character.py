@@ -184,8 +184,14 @@ class AICharacter:
             print(f"[red]\nFailed to read chat history, will create a new one. {e}")
 
         # otherwise wipe it if it exists
-        with open(self.chat_history_filepath, "w") as file:
-            file.write("")
+        try:
+            with open(self.chat_history_filepath, "w") as file:
+                file.write("")
+        except:
+            print(
+                f"[red]\nFailed to clear chat history, will create a new one when needed."
+            )
+
         # and enter the first system message if provided
         if self.first_system_message is not None:
             first_system_message_stringified = "\n".join(

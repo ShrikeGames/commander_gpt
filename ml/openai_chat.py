@@ -100,7 +100,7 @@ class OpenAiManager:
             if self.first_time_run:
                 print("First message sent, so including any chat history as well.")
                 for chat in self.chat_history:
-                    text = chat['content'][0]['text']
+                    text = chat["content"][0]["text"]
                     full_prompt = f"{full_prompt}\n{text}"
                 self.first_time_run = False
             else:
@@ -108,9 +108,16 @@ class OpenAiManager:
             print("full_prompt: ", full_prompt)
             input_ids = self.local_tokenizer.encode(full_prompt, return_tensors="pt")
             local_output = self.local_model.generate(input_ids, max_new_tokens=100)
-            openai_answer = str(self.local_tokenizer.decode(
-                local_output[0], skip_special_tokens=True
-            )).replace(full_prompt, "").replace("<think>", "").replace("</think>", "")
+            openai_answer = (
+                str(
+                    self.local_tokenizer.decode(
+                        local_output[0], skip_special_tokens=True
+                    )
+                )
+                .replace(full_prompt, "")
+                .replace("<think>", "")
+                .replace("</think>", "")
+            )
             # Add the model's response to the chat history
             self.chat_history.append(
                 {

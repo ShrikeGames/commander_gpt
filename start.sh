@@ -1,0 +1,1 @@
+.venv/bin/python3 commander_gpt.py noir
